@@ -1,0 +1,134 @@
+<div class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center">
+  <div class="relative mx-auto shadow-lg rounded-md bg-white w-full max-w-5xl h-auto">
+    <div class="flex">
+      <!-- Left side with background -->
+      <div class="w-1/2 bg-green-600 rounded-l-md hidden md:flex items-center justify-center">
+        <div class="text-center p-4">
+          <h2 class="text-white text-3xl font-bold mb-4">Welcome Back!</h2>
+          <p class="text-white text-lg mb-6">To keep connected with us please login with your personal info</p>
+          <a routerLink="/signin" class="inline-block border border-white text-white font-bold py-2 px-8 rounded-full hover:bg-white hover:text-green-600 transition duration-300">Sign In</a>
+        </div>
+      </div>
+
+      <!-- Right side with form -->
+      <div class="w-full md:w-1/2 p-8">
+        <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Create Account</h2>
+        <form [formGroup]="signupForm" (ngSubmit)="onSubmit()" class="space-y-4">
+
+          <!-- Name -->
+          <div>
+            <label for="name" class="block text-sm font-medium text-gray-700">Full Name</label>
+            <input type="text" id="name" formControlName="name"
+                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
+                   placeholder="John Doe">
+            <div *ngIf="signupForm.get('name')?.invalid && signupForm.get('name')?.touched" class="text-red-500 text-xs mt-1">
+              <span *ngIf="signupForm.get('name')?.errors?.['required']">Name is required.</span>
+            </div>
+          </div>
+
+          <!-- Email -->
+          <div>
+            <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+            <input type="email" id="email" formControlName="email"
+                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
+                   placeholder="you@example.com">
+            <div *ngIf="signupForm.get('email')?.invalid && signupForm.get('email')?.touched" class="text-red-500 text-xs mt-1">
+              <span *ngIf="signupForm.get('email')?.errors?.['required']">Email is required.</span>
+              <span *ngIf="signupForm.get('email')?.errors?.['email']">Invalid email format.</span>
+            </div>
+          </div>
+
+          <!-- Password -->
+          <div class="relative">
+            <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+            <input [type]="passwordVisible ? 'text' : 'password'" id="password" formControlName="password"
+                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
+                   placeholder="********">
+            <button type="button" (click)="togglePasswordVisibility()" class="absolute inset-y-0 right-0 top-6 pr-3 flex items-center text-sm leading-5">
+              <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path *ngIf="!passwordVisible" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path *ngIf="!passwordVisible" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                <path *ngIf="passwordVisible" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7 1.274-4.057 5.064-7 9.542-7 1.845 0 3.543.623 4.938 1.675l-1.562 1.562m-1.375 2.438l-4.5-4.5m4.5 4.5l-1.5-1.5m1.5 1.5l-3 3" />
+                <path *ngIf="passwordVisible" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3l18 18" />
+              </svg>
+            </button>
+            <div *ngIf="signupForm.get('password')?.invalid && signupForm.get('password')?.touched" class="text-red-500 text-xs mt-1">
+              <span *ngIf="signupForm.get('password')?.errors?.['required']">Password is required.</span>
+              <span *ngIf="signupForm.get('password')?.errors?.['minlength']">Password must be at least 6 characters.</span>
+            </div>
+          </div>
+
+          <!-- Confirm Password -->
+          <div class="relative">
+            <label for="confirmPassword" class="block text-sm font-medium text-gray-700">Confirm Password</label>
+            <input [type]="confirmPasswordVisible ? 'text' : 'password'" id="confirmPassword" formControlName="confirmPassword"
+                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
+                   placeholder="********">
+            <button type="button" (click)="toggleConfirmPasswordVisibility()" class="absolute inset-y-0 right-0 top-6 pr-3 flex items-center text-sm leading-5">
+              <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path *ngIf="!confirmPasswordVisible" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path *ngIf="!confirmPasswordVisible" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                <path *ngIf="confirmPasswordVisible" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7 1.274-4.057 5.064-7 9.542-7 1.845 0 3.543.623 4.938 1.675l-1.562 1.562m-1.375 2.438l-4.5-4.5m4.5 4.5l-1.5-1.5m1.5 1.5l-3 3" />
+                <path *ngIf="confirmPasswordVisible" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3l18 18" />
+              </svg>
+            </button>
+            <div *ngIf="signupForm.get('confirmPassword')?.invalid && signupForm.get('confirmPassword')?.touched" class="text-red-500 text-xs mt-1">
+              <span *ngIf="signupForm.get('confirmPassword')?.errors?.['required']">Confirm password is required.</span>
+            </div>
+            <div *ngIf="signupForm.errors?.['mismatch'] && signupForm.get('confirmPassword')?.touched" class="text-red-500 text-xs mt-1">
+              Passwords do not match.
+            </div>
+          </div>
+
+          <!-- Role Selection -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Register as:</label>
+            <div class="flex space-x-4">
+              <label class="inline-flex items-center">
+                <input type="radio" formControlName="role" value="client" (change)="onRoleChange('client')"
+                       class="form-radio h-4 w-4 text-green-600">
+                <span class="ml-2 text-gray-700">Client</span>
+              </label>
+              <label class="inline-flex items-center">
+                <input type="radio" formControlName="role" value="seller" (change)="onRoleChange('seller')"
+                       class="form-radio h-4 w-4 text-green-600">
+                <span class="ml-2 text-gray-700">Seller</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Avatar Upload (Conditional for Seller) -->
+          <div *ngIf="selectedRole === 'seller'">
+            <label for="avatar" class="block text-sm font-medium text-gray-700">Avatar</label>
+            <input type="file" id="avatar" (change)="onFileSelected($event)"
+                   class="mt-1 block w-full text-sm text-gray-500
+                          file:mr-4 file:py-2 file:px-4
+                          file:rounded-md file:border-0
+                          file:text-sm file:font-semibold
+                          file:bg-green-50 file:text-green-600
+                          hover:file:bg-green-100">
+            <div *ngIf="signupForm.get('avatar')?.invalid && signupForm.get('avatar')?.touched" class="text-red-500 text-xs mt-1">
+              <span *ngIf="signupForm.get('avatar')?.errors?.['required']">Avatar is required for sellers.</span>
+              <span *ngIf="signupForm.get('avatar')?.errors?.['maxSize']">File size exceeds 2MB.</span>
+              <span *ngIf="signupForm.get('avatar')?.errors?.['fileType']">Only JPG and PNG images are allowed.</span>
+            </div>
+          </div>
+
+          <!-- Error Message -->
+          <div *ngIf="errorMessage" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+            <strong class="font-bold">Error!</strong>
+            <span class="block sm:inline"> {{ errorMessage }}</span>
+          </div>
+
+          <!-- Submit Button -->
+          <div>
+            <button type="submit" [disabled]="signupForm.invalid"
+                    class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed">
+              Sign Up
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
