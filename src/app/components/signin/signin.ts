@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { AuthService } from '../../services/auth.service';
+import { AuthService } from '../../services/auth';
 
 @Component({
   selector: 'app-signin',
@@ -45,7 +45,7 @@ export class SigninComponent implements OnInit {
             this.router.navigate(['/']);
           }
         },
-        error: (error) => {
+        error: (error: any) => {
           this.errorMessage = error.error.message || 'Login failed';
           console.error('Login failed', error);
         }

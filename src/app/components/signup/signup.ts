@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../../services/auth.service'; // Corrected import path
+import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth';
 
 @Component({
   selector: 'app-signup',
@@ -18,7 +19,11 @@ export class SignupComponent implements OnInit {
   passwordVisible = false;
   confirmPasswordVisible = false;
 
-  constructor(private fb: FormBuilder, private authService: AuthService) {
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private router: Router
+  ) {
     this.signupForm = this.fb.group({
       name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
@@ -88,10 +93,10 @@ export class SignupComponent implements OnInit {
     if (this.signupForm.valid) {
       const { confirmPassword, ...userData } = this.signupForm.value;
       this.authService.register(userData).subscribe({
-        next: (response) => {
+        next: (response: any) => {
           this.router.navigate(['/login']);
         },
-        error: (error) => {
+        error: (error: any) => {
           this.errorMessage = error.error.message || 'Registration failed';
           console.error('Registration failed', error);
         }
