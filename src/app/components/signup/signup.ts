@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth';
+import { NotificationService } from '../../services/notification';
 
 @Component({
   selector: 'app-signup',
@@ -22,7 +23,8 @@ export class SignupComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private notificationService: NotificationService
   ) {
     this.signupForm = this.fb.group({
       name: ['', Validators.required],
@@ -94,10 +96,13 @@ export class SignupComponent implements OnInit {
       const { confirmPassword, ...userData } = this.signupForm.value;
       this.authService.register(userData).subscribe({
         next: (response: any) => {
+          this.notificationService.success('Registration successful! Please sign in.');
           this.router.navigate(['/login']);
         },
         error: (error: any) => {
-          this.errorMessage = error.error.message || 'Registration failed';
+          const message = error.error.message || 'Registration failed';
+          this.errorMessage = message;
+          this.notificationService.error(message);
           console.error('Registration failed', error);
         }
       });

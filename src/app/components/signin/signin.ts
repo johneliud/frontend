@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth';
+import { NotificationService } from '../../services/notification';
 
 @Component({
   selector: 'app-signin',
@@ -19,7 +20,8 @@ export class SigninComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private notificationService: NotificationService
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -38,6 +40,7 @@ export class SigninComponent implements OnInit {
     if (this.loginForm.valid) {
       this.authService.login(this.loginForm.value).subscribe({
         next: () => {
+          this.notificationService.success('Login successful!');
           const role = this.authService.getUserRole();
           if (role === 'seller') {
             this.router.navigate(['/seller-dashboard']);
@@ -46,7 +49,9 @@ export class SigninComponent implements OnInit {
           }
         },
         error: (error: any) => {
-          this.errorMessage = error.error.message || 'Login failed';
+          const message = error.error.message || 'Login failed';
+          this.errorMessage = message;
+          this.notificationService.error(message);
           console.error('Login failed', error);
         }
       });
