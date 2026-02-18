@@ -1,0 +1,67 @@
+<header class="bg-gray-800 text-white h-[100px] flex items-center px-4">
+  <div class="container mx-auto flex justify-between items-center">
+    <!-- Logo -->
+    <a routerLink="/" class="text-2xl font-bold">Buy 01</a>
+
+    <!-- Desktop Navigation -->
+    <nav class="hidden md:flex space-x-4">
+      <a routerLink="/products" class="hover:text-gray-300">Products</a>
+      <!-- Conditional rendering for Dashboard -->
+      <ng-container *ngIf="isSeller">
+        <a routerLink="/dashboard" class="hover:text-gray-300">Dashboard</a>
+      </ng-container>
+    </nav>
+
+    <!-- Theme Toggler & Mobile Menu Button -->
+    <div class="flex items-center space-x-4">
+      <!-- Theme Toggler (Placeholder) -->
+      <button (click)="toggleTheme()" class="p-2 rounded-full hover:bg-gray-700">
+        <!-- Icon for theme toggler (sun/moon icon) -->
+        <ng-container *ngIf="themeService.isDarkMode(); else lightModeIcon">
+          <!-- Moon icon for dark mode -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+          </svg>
+        </ng-container>
+        <ng-template #lightModeIcon>
+          <!-- Sun icon for light mode -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.325 3.325A8.026 8.026 0 0116 12c0-2.224-.872-4.269-2.298-5.702l-.004-.003A8.026 8.026 0 0112 4.001c-2.224 0-4.269.872-5.702 2.298l-.003.004A8.026 8.026 0 014.001 12c0 2.224.872 4.269 2.298 5.702l.004.003A8.026 8.026 0 0112 19.999c2.224 0 4.269-.872 5.702-2.298l.003-.004A8.026 8.026 0 0119.325 15.325z" />
+          </svg>
+        </ng-template>
+      </button>
+
+      <!-- Mobile Menu Button -->
+      <button (click)="toggleMobileMenu()" class="md:hidden p-2 rounded-full hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Menu (Hidden by default) -->
+  <div *ngIf="isMobileMenuOpen" class="md:hidden absolute top-[100px] left-0 w-full bg-gray-800 py-2">
+    <nav class="flex flex-col items-center space-y-2">
+      <a routerLink="/products" class="block w-full text-center py-2 hover:bg-gray-700">Products</a>
+      <ng-container *ngIf="isSeller">
+        <a routerLink="/dashboard" class="block w-full text-center py-2 hover:bg-gray-700">Dashboard</a>
+      </ng-container>
+      <!-- Theme Toggler in Mobile Menu -->
+      <button (click)="toggleTheme()" class="p-2 rounded-full hover:bg-gray-700 w-full">
+        <ng-container *ngIf="themeService.isDarkMode(); else lightModeIconMobile">
+          <!-- Moon icon for dark mode (mobile) -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+          </svg>
+        </ng-container>
+        <ng-template #lightModeIconMobile>
+          <!-- Sun icon for light mode (mobile) -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.325 3.325A8.026 8.026 0 0116 12c0-2.224-.872-4.269-2.298-5.702l-.004-.003A8.026 8.026 0 0112 4.001c-2.224 0-4.269.872-5.702 2.298l-.003.004A8.026 8.026 0 014.001 12c0 2.224.872 4.269 2.298 5.702l.004.003A8.026 8.026 0 0112 19.999c2.224 0 4.269-.872 5.702-2.298l.003-.004A8.026 8.026 0 0119.325 15.325z" />
+          </svg>
+        </ng-template>
+      </button>
+    </nav>
+  </div>
+</header>
