@@ -42,7 +42,7 @@ export class SigninComponent implements OnInit {
           if (role === 'seller') {
             this.router.navigate(['/seller-dashboard']);
           } else {
-            this.router.navigate(['/']);
+            this.router.navigate(['/products']);
           }
         },
         error: (error: any) => {
