@@ -13,9 +13,11 @@ export class AuthService {
 
   register(userData: any): Observable<any> {
     const formData = new FormData();
-    Object.keys(userData).forEach(key => {
-      formData.append(key, userData[key]);
-    });
+    const { avatar, ...userFields } = userData;
+    formData.append('user', new Blob([JSON.stringify(userFields)], { type: 'application/json' }));
+    if (avatar) {
+      formData.append('avatar', avatar);
+    }
     return this.http.post(`${this.apiUrl}/register`, formData);
   }
 
