@@ -8,7 +8,7 @@
       <a routerLink="/products" class="hover:text-gray-300">Products</a>
       <!-- Conditional rendering for Dashboard -->
       <ng-container *ngIf="isSeller">
-        <a routerLink="/dashboard" class="hover:text-gray-300">Dashboard</a>
+        <a routerLink="/seller/dashboard" class="hover:text-gray-300">Dashboard</a>
       </ng-container>
     </nav>
 
@@ -41,7 +41,7 @@
     <nav class="flex flex-col items-center space-y-2">
       <a routerLink="/products" class="block w-full text-center py-2 hover:bg-gray-700">Products</a>
       <ng-container *ngIf="isSeller">
-        <a routerLink="/dashboard" class="block w-full text-center py-2 hover:bg-gray-700">Dashboard</a>
+        <a routerLink="/seller/dashboard" class="block w-full text-center py-2 hover:bg-gray-700">Dashboard</a>
       </ng-container>
       <!-- Theme Toggler in Mobile Menu -->
       <button (click)="toggleTheme()" class="p-2 rounded-full hover:bg-gray-700 w-full">
