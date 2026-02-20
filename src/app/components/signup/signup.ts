@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth';
 import { NotificationService } from '../../services/notification';
+import { AuthModalService } from '../../services/auth-modal.service';
 
 @Component({
   selector: 'app-signup',
@@ -24,20 +25,24 @@ export class SignupComponent implements OnInit {
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    public modalService: AuthModalService,
   ) {
-    this.signupForm = this.fb.group({
-      name: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-      confirmPassword: ['', Validators.required],
-      role: ['client', Validators.required],
-      avatar: [null]
-    }, { validators: this.passwordMatchValidator });
+    this.signupForm = this.fb.group(
+      {
+        name: ['', Validators.required],
+        email: ['', [Validators.required, Validators.email]],
+        password: ['', [Validators.required, Validators.minLength(6)]],
+        confirmPassword: ['', Validators.required],
+        role: ['client', Validators.required],
+        avatar: [null],
+      },
+      { validators: this.passwordMatchValidator },
+    );
   }
 
   ngOnInit(): void {
-    this.signupForm.get('role')?.valueChanges.subscribe(role => {
+    this.signupForm.get('role')?.valueChanges.subscribe((role) => {
       this.selectedRole = role;
       if (role === 'client') {
         this.signupForm.get('avatar')?.clearValidators();
@@ -50,9 +55,18 @@ export class SignupComponent implements OnInit {
     });
   }
 
+  close() {
+    this.modalService.close();
+  }
+
+  switchToSignin() {
+    this.modalService.openSignin();
+  }
+
   passwordMatchValidator(form: FormGroup) {
     return form.get('password')?.value === form.get('confirmPassword')?.value
-      ? null : { mismatch: true };
+      ? null
+      : { mismatch: true };
   }
 
   togglePasswordVisibility(): void {
@@ -72,14 +86,14 @@ export class SignupComponent implements OnInit {
     let fileList: FileList | null = element.files;
     if (fileList && fileList.length > 0) {
       const file = fileList[0];
-      if (file.size > 2 * 1024 * 1024) { // 2MB
-        this.signupForm.get('avatar')?.setErrors({ 'maxSize': true });
+      if (file.size > 2 * 1024 * 1024) {
+        // 2MB
+        this.signupForm.get('avatar')?.setErrors({ maxSize: true });
         this.avatarFile = null;
       } else if (!['image/jpeg', 'image/png', 'image/jpg', 'image/webp'].includes(file.type)) {
-        this.signupForm.get('avatar')?.setErrors({ 'fileType': true });
+        this.signupForm.get('avatar')?.setErrors({ fileType: true });
         this.avatarFile = null;
-      }
-      else {
+      } else {
         this.avatarFile = file;
         this.signupForm.patchValue({ avatar: this.avatarFile });
         this.signupForm.get('avatar')?.setErrors(null);
@@ -97,14 +111,14 @@ export class SignupComponent implements OnInit {
       this.authService.register(userData).subscribe({
         next: (response: any) => {
           this.notificationService.success('Registration successful! Please sign in.');
-          this.router.navigate(['/login']);
+          this.switchToSignin();
         },
         error: (error: any) => {
           const message = error.error.message || 'Registration failed';
           this.errorMessage = message;
           this.notificationService.error(message);
           console.error('Registration failed', error);
-        }
+        },
       });
     } else {
       console.log('Form is invalid');
