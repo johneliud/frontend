@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive, Router, NavigationEnd } from '@angular/router';
 import { AuthService } from '../../services/auth';
@@ -14,7 +14,7 @@ import { filter } from 'rxjs/operators';
   styleUrl: './header.css',
 })
 export class HeaderComponent implements OnInit {
-  isSeller: boolean = false;
+  isSeller = computed(() => this.authService.userRoleSignal() === 'seller');
   isMobileMenuOpen: boolean = false;
 
   constructor(
@@ -25,21 +25,12 @@ export class HeaderComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.checkUserRole();
-
-    // Re-check auth status on navigation
-    this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
-      this.checkUserRole();
-    });
-  }
-
-  checkUserRole(): void {
-    const userRole = this.authService.getUserRole();
-    this.isSeller = userRole === 'seller';
+    // Re-check auth status on navigation can still be useful if other things depend on it,
+    // but authStatus and isSeller are now reactive via signals.
   }
 
   isAuthenticated(): boolean {
-    return this.authService.isAuthenticated();
+    return this.authService.isAuthenticatedSignal();
   }
 
   toggleMobileMenu(): void {
@@ -60,7 +51,6 @@ export class HeaderComponent implements OnInit {
 
   logout(): void {
     this.authService.logout();
-    this.isSeller = false;
     this.router.navigate(['/']);
   }
 }
