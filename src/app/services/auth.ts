@@ -1,4 +1,4 @@
-import { Injectable, PLATFORM_ID, inject } from '@angular/core';
+import { Injectable, PLATFORM_ID, inject, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
@@ -11,6 +11,14 @@ export class AuthService {
   private apiUrl = 'http://localhost:8083/api/users';
   private platformId = inject(PLATFORM_ID);
   private isBrowser = isPlatformBrowser(this.platformId);
+
+  // Reactive authentication state
+  private authStatus = signal<boolean>(this.isAuthenticated());
+  public isAuthenticatedSignal = this.authStatus.asReadonly();
+
+  // Reactive user role state
+  private userRoleState = signal<string | null>(this.getUserRole());
+  public userRoleSignal = this.userRoleState.asReadonly();
 
   constructor(private http: HttpClient) {}
 
@@ -27,16 +35,20 @@ export class AuthService {
   login(credentials: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/login`, credentials).pipe(
       tap((response: any) => {
-        if (this.isBrowser && response && response.token) {
-          localStorage.setItem('token', response.token);
+        if (this.isBrowser && response && response.data && response.data.token) {
+          localStorage.setItem('token', response.data.token);
+          this.authStatus.set(true);
+          this.userRoleState.set(this.getUserRole());
         }
-      })
+      }),
     );
   }
 
   logout(): void {
     if (this.isBrowser) {
       localStorage.removeItem('token');
+      this.authStatus.set(false);
+      this.userRoleState.set(null);
     }
   }
 
@@ -53,7 +65,7 @@ export class AuthService {
     if (token) {
       try {
         const payload = JSON.parse(atob(token.split('.')[1]));
-        return payload.role;
+        return payload.role ? payload.role.toLowerCase() : null;
       } catch (e) {
         return null;
       }
