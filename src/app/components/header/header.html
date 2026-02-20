@@ -7,7 +7,7 @@
     <nav class="hidden md:flex space-x-4">
       <a routerLink="/products" class="hover:text-gray-300">Products</a>
       <!-- Conditional rendering for Dashboard -->
-      <ng-container *ngIf="isSeller">
+      <ng-container *ngIf="isSeller()">
         <a routerLink="/seller/dashboard" class="hover:text-gray-300">Dashboard</a>
       </ng-container>
     </nav>
@@ -17,7 +17,7 @@
       <ng-container *ngIf="!isAuthenticated(); else authActions">
         <button
           (click)="openSignup()"
-          class="hidden lg:block text-white hover:text-gray-300 font-medium cursor-pointer"
+          class="hidden lg:block px-8 py-2 rounded-full text-white font-medium cursor-pointer"
         >
           Sign Up
         </button>
@@ -32,24 +32,9 @@
       <ng-template #authActions>
         <button
           (click)="logout()"
-          class="text-white hover:text-red-400 font-medium flex items-center space-x-2 cursor-pointer transition-colors"
+          class="border-2 border-white text-white px-8 py-2 rounded-full hover:bg-white hover:text-gray-800 font-medium flex items-center space-x-2 cursor-pointer transition-colors"
         >
           <span>Logout</span>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-            <polyline points="16 17 21 12 16 7" />
-            <line x1="21" y1="12" x2="9" y2="12" />
-          </svg>
         </button>
       </ng-template>
 
@@ -137,7 +122,7 @@
         class="block w-full text-center py-3 hover:bg-gray-700 rounded transition-colors"
         >Products</a
       >
-      <ng-container *ngIf="isSeller">
+      <ng-container *ngIf="isSeller()">
         <a
           routerLink="/seller/dashboard"
           (click)="toggleMobileMenu()"
