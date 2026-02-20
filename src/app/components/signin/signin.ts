@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth';
 import { NotificationService } from '../../services/notification';
+import { AuthModalService } from '../../services/auth-modal.service';
 
 @Component({
   selector: 'app-signin',
@@ -21,15 +22,24 @@ export class SigninComponent implements OnInit {
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    public modalService: AuthModalService,
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required]
+      password: ['', Validators.required],
     });
   }
 
   ngOnInit(): void {}
+
+  close() {
+    this.modalService.close();
+  }
+
+  switchToSignup() {
+    this.modalService.openSignup();
+  }
 
   togglePasswordVisibility(): void {
     this.passwordVisible = !this.passwordVisible;
@@ -41,6 +51,7 @@ export class SigninComponent implements OnInit {
       this.authService.login(this.loginForm.value).subscribe({
         next: () => {
           this.notificationService.success('Login successful!');
+          this.close();
           setTimeout(() => {
             const role = this.authService.getUserRole();
             if (role === 'seller') {
@@ -57,7 +68,7 @@ export class SigninComponent implements OnInit {
           this.errorMessage = message;
           this.notificationService.error(message);
           console.error('Login failed', error);
-        }
+        },
       });
     } else {
       console.log('Form is invalid');
