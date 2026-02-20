@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NotificationService, NotificationMessage } from '../../services/notification';
 import { Subscription } from 'rxjs';
@@ -15,20 +15,30 @@ export class NotificationComponent implements OnInit, OnDestroy {
   private subscription?: Subscription;
   private timeoutId?: number;
 
-  constructor(private notificationService: NotificationService) {}
+  constructor(
+    private notificationService: NotificationService,
+    private cdr: ChangeDetectorRef,
+    private ngZone: NgZone
+  ) { }
 
   ngOnInit() {
     this.subscription = this.notificationService.notification$.subscribe(
       (notification) => {
-        this.notification = notification;
-        
-        if (this.timeoutId) {
-          clearTimeout(this.timeoutId);
-        }
-        
-        this.timeoutId = window.setTimeout(() => {
-          this.notification = null;
-        }, 5000);
+        this.ngZone.run(() => {
+          this.notification = notification;
+          this.cdr.detectChanges();
+
+          if (this.timeoutId) {
+            clearTimeout(this.timeoutId);
+          }
+
+          this.timeoutId = window.setTimeout(() => {
+            this.ngZone.run(() => {
+              this.notification = null;
+              this.cdr.detectChanges();
+            });
+          }, 5000);
+        });
       }
     );
   }
@@ -47,5 +57,6 @@ export class NotificationComponent implements OnInit, OnDestroy {
     if (this.timeoutId) {
       clearTimeout(this.timeoutId);
     }
+    this.cdr.detectChanges();
   }
 }

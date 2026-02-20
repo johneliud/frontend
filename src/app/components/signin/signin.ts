@@ -41,15 +41,19 @@ export class SigninComponent implements OnInit {
       this.authService.login(this.loginForm.value).subscribe({
         next: () => {
           this.notificationService.success('Login successful!');
-          const role = this.authService.getUserRole();
-          if (role === 'seller') {
-            this.router.navigate(['/seller-dashboard']);
-          } else {
-            this.router.navigate(['/products']);
-          }
+          setTimeout(() => {
+            const role = this.authService.getUserRole();
+            if (role === 'seller') {
+              this.router.navigate(['/seller/dashboard']);
+            } else {
+              this.router.navigate(['/products']);
+            }
+          }, 3000);
         },
         error: (error: any) => {
-          const message = error.error.message || 'Login failed';
+          console.log('Full error object:', error);
+          console.log('Error body:', error.error);
+          const message = error.error?.message || error.statusText || 'Login failed';
           this.errorMessage = message;
           this.notificationService.error(message);
           console.error('Login failed', error);

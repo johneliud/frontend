@@ -1,4 +1,4 @@
-<header class="bg-gray-800 text-white h-[100px] flex items-center px-4">
+<header class="bg-gray-800 text-white h-[100px] flex items-center px-4 sticky top-0 z-50">
   <div class="container mx-auto flex justify-between items-center">
     <!-- Logo -->
     <a routerLink="/" class="text-2xl font-bold">Buy 01</a>
@@ -8,27 +8,51 @@
       <a routerLink="/products" class="hover:text-gray-300">Products</a>
       <!-- Conditional rendering for Dashboard -->
       <ng-container *ngIf="isSeller">
-        <a routerLink="/dashboard" class="hover:text-gray-300">Dashboard</a>
+        <a routerLink="/seller/dashboard" class="hover:text-gray-300">Dashboard</a>
       </ng-container>
     </nav>
 
     <!-- Theme Toggler & Mobile Menu Button -->
-    <div class="flex items-center space-x-4">
+    <div class="flex items-center space-x-8">
+      <!-- Login Button (if not authenticated) -->
+      <a *ngIf="!isAuthenticated()" routerLink="/login"
+        class="bg-blue-600 hover:bg-blue-700 px-8 py-2 rounded text-white">
+        Login
+      </a>
+
       <!-- Theme Toggler (Placeholder) -->
-      <button (click)="toggleTheme()" class="p-2 rounded-full hover:bg-gray-700">
+      <button (click)="toggleTheme()" class="p-2 rounded-full hover:bg-gray-700 cursor-pointer">
         <!-- Icon for theme toggler (sun/moon icon) -->
         <ng-container *ngIf="themeService.isDarkMode(); else lightModeIcon">
           <!-- Moon icon for dark mode -->
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-moon-icon lucide-moon"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            class="lucide lucide-moon-icon lucide-moon">
+            <path
+              d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" />
+          </svg>
         </ng-container>
         <ng-template #lightModeIcon>
           <!-- Sun icon for light mode -->
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sun-icon lucide-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            class="lucide lucide-sun-icon lucide-sun">
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2v2" />
+            <path d="M12 20v2" />
+            <path d="m4.93 4.93 1.41 1.41" />
+            <path d="m17.66 17.66 1.41 1.41" />
+            <path d="M2 12h2" />
+            <path d="M20 12h2" />
+            <path d="m6.34 17.66-1.41 1.41" />
+            <path d="m19.07 4.93-1.41 1.41" />
+          </svg>
         </ng-template>
       </button>
 
       <!-- Mobile Menu Button -->
-      <button (click)="toggleMobileMenu()" class="md:hidden p-2 rounded-full hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+      <button (click)="toggleMobileMenu()"
+        class="md:hidden p-2 rounded-full hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
         </svg>
@@ -41,17 +65,34 @@
     <nav class="flex flex-col items-center space-y-2">
       <a routerLink="/products" class="block w-full text-center py-2 hover:bg-gray-700">Products</a>
       <ng-container *ngIf="isSeller">
-        <a routerLink="/dashboard" class="block w-full text-center py-2 hover:bg-gray-700">Dashboard</a>
+        <a routerLink="/seller/dashboard" class="block w-full text-center py-2 hover:bg-gray-700">Dashboard</a>
       </ng-container>
       <!-- Theme Toggler in Mobile Menu -->
       <button (click)="toggleTheme()" class="p-2 rounded-full hover:bg-gray-700 w-full">
         <ng-container *ngIf="themeService.isDarkMode(); else lightModeIconMobile">
           <!-- Moon icon for dark mode (mobile) -->
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-moon-icon lucide-moon"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            class="lucide lucide-moon-icon lucide-moon">
+            <path
+              d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" />
+          </svg>
         </ng-container>
         <ng-template #lightModeIconMobile>
           <!-- Sun icon for light mode (mobile) -->
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sun-icon lucide-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            class="lucide lucide-sun-icon lucide-sun">
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2v2" />
+            <path d="M12 20v2" />
+            <path d="m4.93 4.93 1.41 1.41" />
+            <path d="m17.66 17.66 1.41 1.41" />
+            <path d="M2 12h2" />
+            <path d="M20 12h2" />
+            <path d="m6.34 17.66-1.41 1.41" />
+            <path d="m19.07 4.93-1.41 1.41" />
+          </svg>
         </ng-template>
       </button>
     </nav>
