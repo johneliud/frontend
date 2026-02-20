@@ -52,14 +52,12 @@ export class SigninComponent implements OnInit {
         next: () => {
           this.notificationService.success('Login successful!');
           this.close();
-          setTimeout(() => {
             const role = this.authService.getUserRole();
             if (role === 'seller') {
               this.router.navigate(['/seller/dashboard']);
             } else {
               this.router.navigate(['/products']);
             }
-          }, 3000);
         },
         error: (error: any) => {
           console.log('Full error object:', error);
