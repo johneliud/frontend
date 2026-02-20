@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, PLATFORM_ID, inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { tap, map } from 'rxjs/operators';
@@ -8,21 +9,25 @@ import { tap, map } from 'rxjs/operators';
 })
 export class AuthService {
   private apiUrl = 'http://localhost:8083/api/users';
+  private platformId = inject(PLATFORM_ID);
+  private isBrowser = isPlatformBrowser(this.platformId);
 
   constructor(private http: HttpClient) {}
 
   register(userData: any): Observable<any> {
     const formData = new FormData();
-    Object.keys(userData).forEach(key => {
-      formData.append(key, userData[key]);
-    });
+    const { avatar, ...userFields } = userData;
+    formData.append('user', new Blob([JSON.stringify(userFields)], { type: 'application/json' }));
+    if (avatar) {
+      formData.append('avatar', avatar);
+    }
     return this.http.post(`${this.apiUrl}/register`, formData);
   }
 
   login(credentials: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/login`, credentials).pipe(
       tap((response: any) => {
-        if (response && response.token) {
+        if (this.isBrowser && response && response.token) {
           localStorage.setItem('token', response.token);
         }
       })
@@ -30,11 +35,13 @@ export class AuthService {
   }
 
   logout(): void {
-    localStorage.removeItem('token');
+    if (this.isBrowser) {
+      localStorage.removeItem('token');
+    }
   }
 
   getToken(): string | null {
-    return localStorage.getItem('token');
+    return this.isBrowser ? localStorage.getItem('token') : null;
   }
 
   isAuthenticated(): boolean {
