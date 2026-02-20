@@ -9,8 +9,6 @@ import { RoleGuard } from './guards/role.guard';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, pathMatch: 'full' },
-  { path: 'login', component: SigninComponent },
-  { path: 'register', component: SignupComponent },
   { path: 'products', component: ProductsComponent },
   {
     path: 'seller/dashboard',
