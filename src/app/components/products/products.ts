@@ -14,7 +14,7 @@ import { Product } from '../../models/product';
 })
 export class ProductsComponent implements OnInit {
   products: Product[] = [];
-  productImages: Map<string, string> = new Map();
+  productImages = new Map<string, string>();
   loading = true;
   error: string | null = null;
 
@@ -50,43 +50,53 @@ export class ProductsComponent implements OnInit {
       maxPrice: this.maxPrice ?? undefined,
     };
 
+    console.log('Loading products with filters:', filters);
     this.productService.getProducts(filters).subscribe({
       next: (data) => {
+        console.log('Products loaded:', data);
         this.products = data;
         this.loading = false;
         this.loadProductImages();
-        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Failed loading products:', err);
         this.error = 'Failed to load products';
         this.loading = false;
-        this.cdr.detectChanges();
       },
     });
   }
 
   loadProductImages() {
+    console.log('Loading images for products:', this.products.map(p => p.id));
     this.products.forEach(product => {
+      console.log(`Fetching media for product: ${product.id}`);
       this.mediaService.getMediaByProduct(product.id).subscribe({
         next: (media) => {
+          console.log(`Media response for product ${product.id}:`, media);
           if (media.length > 0) {
-            this.productImages.set(product.id, this.mediaService.getMediaUrl(media[0].id));
+            const imageUrl = this.mediaService.getMediaUrl(media[0].id);
+            console.log(`Setting image URL for product ${product.id}: ${imageUrl}`);
+            this.productImages.set(product.id, imageUrl);
             this.cdr.detectChanges();
+            
+            // Test if image loads
+            const img = new Image();
+            img.onload = () => console.log(`Image loaded successfully: ${imageUrl}`);
+            img.onerror = (e) => console.error(`Image failed to load: ${imageUrl}`, e);
+            img.src = imageUrl;
+          } else {
+            console.log(`No media found for product ${product.id}`);
           }
         },
-        error: () => {
-          // Silently fail
+        error: (err) => {
+          console.error(`Error fetching media for product ${product.id}:`, err);
         }
       });
     });
   }
 
-  getProductImage(productId: string): string | null {
-    return this.productImages.get(productId) || null;
-  }
-
   onImageError(event: Event, productId: string) {
+    console.error(`Image failed to load for product ${productId}`);
     this.productImages.delete(productId);
   }
 
