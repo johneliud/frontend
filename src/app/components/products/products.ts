@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ProductService, ProductFilters } from '../../services/product';
@@ -27,7 +27,10 @@ export class ProductsComponent implements OnInit {
   minPrice: number | null = null;
   maxPrice: number | null = null;
 
-  constructor(private productService: ProductService) {}
+  constructor(
+    private productService: ProductService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
     this.loadProducts();
@@ -48,10 +51,13 @@ export class ProductsComponent implements OnInit {
       next: (data) => {
         this.products = data;
         this.loading = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
+        console.error("Failed loading products:", err);
         this.error = 'Failed to load products';
         this.loading = false;
+        this.cdr.detectChanges();
       }
     });
   }
