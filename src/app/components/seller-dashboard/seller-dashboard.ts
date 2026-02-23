@@ -93,10 +93,16 @@ export class SellerDashboardComponent implements OnInit {
         this.closeForm();
         this.loadProducts();
       },
-      error: () => {
-        this.notificationService.error(
-          this.editMode ? 'Failed to update product' : 'Failed to create product'
-        );
+      error: (err) => {
+        let errorMessage = this.editMode ? 'Failed to update product' : 'Failed to create product';
+        
+        if (err.error?.errors && typeof err.error.errors === 'object') {
+          errorMessage = Object.values(err.error.errors).join(', ');
+        } else if (err.error?.message) {
+          errorMessage = err.error.message;
+        }
+        
+        this.notificationService.error(errorMessage);
       }
     });
   }
@@ -120,7 +126,8 @@ export class SellerDashboardComponent implements OnInit {
         this.cancelDelete();
         this.loadProducts();
       },
-      error: () => {
+      error: (err) => {
+        console.error('Delete error:', err);
         this.notificationService.error('Failed to delete product');
         this.cancelDelete();
       }
