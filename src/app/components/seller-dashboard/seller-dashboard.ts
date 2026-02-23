@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ProductService } from '../../services/product';
@@ -25,7 +25,8 @@ export class SellerDashboardComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private productService: ProductService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private cdr: ChangeDetectorRef
   ) {
     this.productForm = this.fb.group({
       name: ['', Validators.required],
@@ -45,10 +46,12 @@ export class SellerDashboardComponent implements OnInit {
       next: (data) => {
         this.products = data;
         this.loading = false;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.notificationService.error('Failed to load products');
         this.loading = false;
+        this.cdr.detectChanges();
       }
     });
   }
