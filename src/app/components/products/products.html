@@ -78,7 +78,12 @@
     <div *ngFor="let product of products" class="bg-white rounded-md shadow-lg overflow-hidden border border-gray-200">
       <!-- Product Image -->
       <div class="h-48 bg-gray-200 flex items-center justify-center">
-        <span class="text-gray-400">No image</span>
+        <img *ngIf="getProductImage(product.id)" 
+             [src]="getProductImage(product.id)!" 
+             [alt]="product.name"
+             (error)="onImageError($event, product.id)"
+             class="w-full h-full object-cover">
+        <span *ngIf="!getProductImage(product.id)" class="text-gray-400">No image</span>
       </div>
 
       <!-- Product Info -->

@@ -2,6 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ProductService, ProductFilters } from '../../services/product';
+import { MediaService } from '../../services/media';
 import { Product } from '../../models/product';
 
 @Component({
@@ -13,6 +14,7 @@ import { Product } from '../../models/product';
 })
 export class ProductsComponent implements OnInit {
   products: Product[] = [];
+  productImages: Map<string, string> = new Map();
   loading = true;
   error: string | null = null;
 
@@ -20,7 +22,7 @@ export class ProductsComponent implements OnInit {
     page: 0,
     size: 10,
     sortBy: 'name',
-    sortDir: 'asc'
+    sortDir: 'asc',
   };
 
   search = '';
@@ -29,7 +31,8 @@ export class ProductsComponent implements OnInit {
 
   constructor(
     private productService: ProductService,
-    private cdr: ChangeDetectorRef
+    private mediaService: MediaService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
@@ -44,22 +47,47 @@ export class ProductsComponent implements OnInit {
       ...this.filters,
       search: this.search || undefined,
       minPrice: this.minPrice ?? undefined,
-      maxPrice: this.maxPrice ?? undefined
+      maxPrice: this.maxPrice ?? undefined,
     };
 
     this.productService.getProducts(filters).subscribe({
       next: (data) => {
         this.products = data;
         this.loading = false;
+        this.loadProductImages();
         this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error("Failed loading products:", err);
+        console.error('Failed loading products:', err);
         this.error = 'Failed to load products';
         this.loading = false;
         this.cdr.detectChanges();
-      }
+      },
     });
+  }
+
+  loadProductImages() {
+    this.products.forEach(product => {
+      this.mediaService.getMediaByProduct(product.id).subscribe({
+        next: (media) => {
+          if (media.length > 0) {
+            this.productImages.set(product.id, this.mediaService.getMediaUrl(media[0].id));
+            this.cdr.detectChanges();
+          }
+        },
+        error: () => {
+          // Silently fail
+        }
+      });
+    });
+  }
+
+  getProductImage(productId: string): string | null {
+    return this.productImages.get(productId) || null;
+  }
+
+  onImageError(event: Event, productId: string) {
+    this.productImages.delete(productId);
   }
 
   onSearch() {
