@@ -41,7 +41,7 @@ export class ProductService {
   }
 
   getSellerProducts(): Observable<Product[]> {
-    return this.http.get<any>(`${this.apiUrl}/seller`).pipe(
+    return this.http.get<any>(`${this.apiUrl}/my-products`).pipe(
       map(response => response.data?.content || response.data || [])
     );
   }

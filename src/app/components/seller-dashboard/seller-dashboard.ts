@@ -31,7 +31,7 @@ export class SellerDashboardComponent implements OnInit {
       name: ['', Validators.required],
       description: ['', Validators.required],
       price: ['', [Validators.required, Validators.min(0)]],
-      stock: ['', [Validators.required, Validators.min(0)]]
+      quantity: ['', [Validators.required, Validators.min(0)]]
     });
   }
 
@@ -76,11 +76,7 @@ export class SellerDashboardComponent implements OnInit {
   onSubmit() {
     if (this.productForm.invalid) return;
 
-    const productData = {
-      ...this.productForm.value,
-      quantity: this.productForm.value.stock
-    };
-    delete productData.stock;
+    const productData = this.productForm.value;
     
     const request = this.editMode && this.selectedProduct
       ? this.productService.updateProduct(this.selectedProduct.id, productData)
