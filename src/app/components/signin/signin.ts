@@ -9,7 +9,7 @@ import { AuthModalService } from '../../services/auth-modal.service';
 @Component({
   selector: 'app-signin',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, RouterLink],
+  imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './signin.html',
   styleUrl: './signin.css',
 })
