@@ -60,8 +60,6 @@ export class SigninComponent implements OnInit {
             }
         },
         error: (error: any) => {
-          console.log('Full error object:', error);
-          console.log('Error body:', error.error);
           const message = error.error?.message || error.statusText || 'Login failed';
           this.errorMessage = message;
           this.notificationService.error(message);

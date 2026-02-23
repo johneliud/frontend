@@ -76,7 +76,12 @@ export class SellerDashboardComponent implements OnInit {
   onSubmit() {
     if (this.productForm.invalid) return;
 
-    const productData = this.productForm.value;
+    const productData = {
+      ...this.productForm.value,
+      quantity: this.productForm.value.stock
+    };
+    delete productData.stock;
+    
     const request = this.editMode && this.selectedProduct
       ? this.productService.updateProduct(this.selectedProduct.id, productData)
       : this.productService.createProduct(productData);
