@@ -4,11 +4,12 @@
     <a routerLink="/" class="text-2xl font-bold">Buy 01</a>
 
     <!-- Desktop Navigation -->
-    <nav class="hidden md:flex space-x-4">
+    <nav class="hidden md:flex space-x-8">
       <a routerLink="/products" class="hover:text-gray-300">Products</a>
       <!-- Conditional rendering for Dashboard -->
       <ng-container *ngIf="isSeller()">
         <a routerLink="/seller/dashboard" class="hover:text-gray-300">Dashboard</a>
+        <a routerLink="/seller/media" class="hover:text-gray-300">Media</a>
       </ng-container>
     </nav>
 
@@ -128,6 +129,12 @@
           (click)="toggleMobileMenu()"
           class="block w-full text-center py-3 hover:bg-gray-700 rounded transition-colors"
           >Dashboard</a
+        >
+        <a
+          routerLink="/seller/media"
+          (click)="toggleMobileMenu()"
+          class="block w-full text-center py-3 hover:bg-gray-700 rounded transition-colors"
+          >Media</a
         >
       </ng-container>
 

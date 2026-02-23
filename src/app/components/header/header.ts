@@ -4,12 +4,11 @@ import { RouterLink, RouterLinkActive, Router, NavigationEnd } from '@angular/ro
 import { AuthService } from '../../services/auth';
 import { ThemeService } from '../../services/theme.service';
 import { AuthModalService } from '../../services/auth-modal.service';
-import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive],
+  imports: [CommonModule, RouterLink],
   templateUrl: './header.html',
   styleUrl: './header.css',
 })
