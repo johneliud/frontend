@@ -21,9 +21,11 @@ export class JwtInterceptor implements HttpInterceptor {
 
     if (token) {
       let userId = '';
+      let userRole = '';
       try {
         const payload = JSON.parse(atob(token.split('.')[1]));
         userId = payload.sub || '';
+        userRole = payload.role || '';
       } catch (e) {
         console.error('Failed to parse token', e);
       }
@@ -31,7 +33,8 @@ export class JwtInterceptor implements HttpInterceptor {
       request = request.clone({
         setHeaders: {
           Authorization: `Bearer ${token}`,
-          'X-User-Id': userId
+          'X-User-Id': userId,
+          'X-User-Role': userRole
         }
       });
     }
@@ -39,7 +42,6 @@ export class JwtInterceptor implements HttpInterceptor {
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
         if (error.status === 401 || error.status === 403) {
-          // Attempt to refresh token or redirect to login
           this.authService.logout();
           this.router.navigate(['/login']);
         }
