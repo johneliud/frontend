@@ -63,6 +63,11 @@ export class ProfileComponent implements OnInit {
     });
   }
 
+  getAvatarUrl(): string | null {
+    if (!this.user?.avatar) return null;
+    return `http://localhost:8083/api/users/avatars/${this.user.avatar}`;
+  }
+
   onAvatarSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
