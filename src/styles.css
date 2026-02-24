@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 * {
-  font-family: "Geist Mono", monospace;
+  font-family: "Space Grotesk", sans-serif;
 }
 
 a, button {
