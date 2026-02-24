@@ -96,4 +96,10 @@ export class ProductsComponent implements OnInit {
   onSortChange() {
     this.loadProducts();
   }
+
+  showFilters = false;
+
+  toggleFilters() {
+    this.showFilters = !this.showFilters;
+  }
 }
