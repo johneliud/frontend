@@ -31,6 +31,12 @@
       </ng-container>
 
       <ng-template #authActions>
+        <a
+          routerLink="/profile"
+          class="hidden lg:block px-2 py-2 rounded-full text-white font-medium hover:text-gray-300 cursor-pointer"
+        >
+          Profile
+        </a>
         <button
           (click)="logout()"
           class="border-2 border-white text-white px-8 py-2 rounded-full hover:bg-white hover:text-gray-800 font-medium flex items-center space-x-2 cursor-pointer transition-colors"
@@ -156,6 +162,12 @@
       </ng-container>
 
       <ng-template #mobileAuthActions>
+        <a
+          routerLink="/profile"
+          (click)="toggleMobileMenu()"
+          class="block w-full text-center py-3 hover:bg-gray-700 rounded transition-colors"
+          >Profile</a
+        >
         <button
           (click)="logout(); toggleMobileMenu()"
           class="block w-full py-3 text-red-400 font-medium hover:bg-gray-700 rounded transition-colors"
