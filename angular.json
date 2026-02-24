@@ -67,7 +67,10 @@
               "buildTarget": "frontend:build:development"
             }
           },
-          "defaultConfiguration": "development"
+          "defaultConfiguration": "development",
+          "options": {
+            "allowedHosts": ["bentlee-flawed-sunshine.ngrok-free.dev"]
+          }
         },
         "test": {
           "builder": "@angular/build:unit-test"
