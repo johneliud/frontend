@@ -1,4 +1,4 @@
-<div class="container mx-auto px-4 py-8 max-w-2xl">
+<div class="container mx-auto px-4 py-8">
   <h1 class="text-3xl font-bold mb-6 text-gray-800">Profile</h1>
 
   <!-- Loading State -->
@@ -7,42 +7,42 @@
   </div>
 
   <!-- Profile Content -->
-  <div *ngIf="!loading && user" class="space-y-6">
-    <!-- Avatar Section (Sellers Only) -->
+  <div *ngIf="!loading && user" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- Avatar Section (Sellers Only) - Left -->
     <div *ngIf="isSeller()" class="bg-white rounded-md shadow-lg p-6 border border-gray-200">
       <h2 class="text-xl font-bold mb-4 text-gray-800">Avatar</h2>
-
-      <div class="flex items-center gap-6">
-        <div class="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
+      
+      <div class="flex flex-col items-center gap-4">
+        <div class="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
           <img *ngIf="avatarPreview || user.avatar"
                [src]="avatarPreview || user.avatar"
                alt="Avatar"
                class="w-full h-full object-cover">
-          <span *ngIf="!avatarPreview && !user.avatar" class="text-gray-400 text-3xl">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-user-round-icon lucide-circle-user-round"><path d="M18 20a6 6 0 0 0-12 0"/><circle cx="12" cy="10" r="4"/><circle cx="12" cy="12" r="10"/></svg>
+          <span *ngIf="!avatarPreview && !user.avatar" class="text-gray-400 text-4xl">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20a6 6 0 0 0-12 0"/><circle cx="12" cy="10" r="4"/><circle cx="12" cy="12" r="10"/></svg>
           </span>
         </div>
 
-        <div class="flex-1">
+        <div class="w-full">
           <input
             type="file"
             (change)="onAvatarSelected($event)"
             accept="image/png,image/jpeg,image/jpg,image/webp"
-            class="mb-2 text-sm">
+            class="mb-2 text-sm w-full">
           <p class="text-xs text-gray-500 mb-3">Max 2MB. PNG, JPG, JPEG, WEBP</p>
 
           <button
             (click)="uploadAvatar()"
             [disabled]="!selectedAvatar || uploadingAvatar"
-            class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-sm">
+            class="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-sm">
             {{ uploadingAvatar ? 'Uploading...' : 'Upload Avatar' }}
           </button>
         </div>
       </div>
     </div>
 
-    <!-- Profile Information -->
-    <div class="bg-white rounded-md shadow-lg p-6 border border-gray-200">
+    <!-- Profile Information - Right -->
+    <div class="bg-white rounded-md shadow-lg p-6 border border-gray-200" [class.md:col-span-2]="!isSeller()">
       <h2 class="text-xl font-bold mb-4 text-gray-800">Profile Information</h2>
 
       <div class="space-y-4">
