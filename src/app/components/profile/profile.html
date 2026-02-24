@@ -14,26 +14,34 @@
       
       <div class="flex flex-col items-center gap-4">
         <div class="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
-          <img *ngIf="avatarPreview || user.avatar"
-               [src]="avatarPreview || user.avatar"
+          <img *ngIf="avatarPreview || getAvatarUrl()"
+               [src]="avatarPreview || getAvatarUrl()"
                alt="Avatar"
                class="w-full h-full object-cover">
-          <span *ngIf="!avatarPreview && !user.avatar" class="text-gray-400 text-4xl">
+          <span *ngIf="!avatarPreview && !getAvatarUrl()" class="text-gray-400 text-4xl">
             <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20a6 6 0 0 0-12 0"/><circle cx="12" cy="10" r="4"/><circle cx="12" cy="12" r="10"/></svg>
           </span>
         </div>
 
         <div class="w-full">
           <input
+            #fileInput
             type="file"
             (change)="onAvatarSelected($event)"
             accept="image/png,image/jpeg,image/jpg,image/webp"
-            class="mb-2 text-sm w-full">
+            class="hidden">
           <p class="text-xs text-gray-500 mb-3">Max 2MB. PNG, JPG, JPEG, WEBP</p>
 
           <button
+            (click)="fileInput.click()"
+            class="w-full px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 text-sm mb-2">
+            {{ selectedAvatar ? 'Change Image' : 'Select Image' }}
+          </button>
+
+          <button
+            *ngIf="selectedAvatar"
             (click)="uploadAvatar()"
-            [disabled]="!selectedAvatar || uploadingAvatar"
+            [disabled]="uploadingAvatar"
             class="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-sm">
             {{ uploadingAvatar ? 'Uploading...' : 'Upload Avatar' }}
           </button>
