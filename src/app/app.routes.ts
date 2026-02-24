@@ -30,11 +30,5 @@ export const routes: Routes = [
     data: { roles: ['seller'] },
   },
 
-  // { path: 'products/:id', loadComponent: () => import('./components/product-detail/product-detail').then(m => m.ProductDetailComponent) },
-  // { path: 'profile', loadComponent: () => import('./components/profile/profile').then(m => m.ProfileComponent), canActivate: [AuthGuard] },
-  // { path: 'seller-dashboard', loadComponent: () => import('./components/seller-dashboard/seller-dashboard').then(m => m.SellerDashboardComponent), canActivate: [AuthGuard, RoleGuard], data: { roles: ['seller'] } },
-  // { path: 'seller/products', loadComponent: () => import('./components/seller-products/seller-products').then(m => m.SellerProductsComponent), canActivate: [AuthGuard, RoleGuard], data: { roles: ['seller'] } },
-  // { path: 'seller/media', loadComponent: () => import('./components/seller-media/seller-media').then(m => m.SellerMediaComponent), canActivate: [AuthGuard, RoleGuard], data: { roles: ['seller'] } },
-
   { path: '**', redirectTo: '' },
 ];
