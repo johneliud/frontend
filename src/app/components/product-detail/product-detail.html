@@ -7,38 +7,59 @@
   <!-- Error State -->
   <div *ngIf="error" class="text-center py-12">
     <p class="text-red-600 mb-4">{{ error }}</p>
-    <button (click)="goBack()" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+    <button
+      (click)="goBack()"
+      class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+    >
       Back to Products
     </button>
   </div>
 
   <!-- Product Detail -->
-  <div *ngIf="!loading && !error && product" class="max-w-6xl mx-auto">
+  <div *ngIf="!loading && !error && product" class="w-full">
     <!-- Back Button -->
     <button (click)="goBack()" class="mb-6 flex items-center text-blue-600 hover:text-blue-700">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
-        <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-5 w-5 mr-1"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+          clip-rule="evenodd"
+        />
       </svg>
       Back to Products
     </button>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 justify-between">
       <!-- Product Images -->
       <div>
-        <div class="bg-gray-200 rounded-lg overflow-hidden mb-4" style="height: 400px;">
-          <img *ngIf="images.length > 0"
-               [src]="images[0]"
-               [alt]="product.name"
-               class="w-full h-full object-cover">
-          <div *ngIf="images.length === 0" class="w-full h-full flex items-center justify-center text-gray-400">
+        <div class="bg-gray-200 rounded-lg overflow-hidden mb-4" style="height: 400px">
+          <img
+            *ngIf="images.length > 0"
+            [src]="images[0]"
+            [alt]="product.name"
+            class="w-full h-full object-cover"
+          />
+          <div
+            *ngIf="images.length === 0"
+            class="w-full h-full flex items-center justify-center text-gray-400"
+          >
             No image available
           </div>
         </div>
 
         <!-- Thumbnail Gallery -->
         <div *ngIf="images.length > 1" class="grid grid-cols-4 gap-2">
-          <div *ngFor="let image of images" class="bg-gray-200 rounded overflow-hidden cursor-pointer hover:opacity-75" style="height: 80px;">
-            <img [src]="image" [alt]="product.name" class="w-full h-full object-cover">
+          <div
+            *ngFor="let image of images"
+            class="bg-gray-200 rounded overflow-hidden cursor-pointer hover:opacity-75"
+            style="height: 80px"
+          >
+            <img [src]="image" [alt]="product.name" class="w-full h-full object-cover" />
           </div>
         </div>
       </div>
@@ -46,7 +67,9 @@
       <!-- Product Info -->
       <div>
         <h1 class="text-3xl font-bold text-gray-800 mb-4">{{ product.name }}</h1>
-        <p class="text-4xl font-bold text-blue-600 mb-6">KES {{ product.price | currency:'KES':'':'1.2-2' }}</p>
+        <p class="text-4xl font-bold text-blue-600 mb-6">
+          KES {{ product.price | currency: 'KES' : '' : '1.2-2' }}
+        </p>
 
         <div class="mb-6">
           <h2 class="text-lg font-semibold text-gray-700 mb-2">Description</h2>
@@ -62,13 +85,27 @@
         <div *ngIf="seller" class="border-t pt-6">
           <h2 class="text-lg font-semibold text-gray-700 mb-4">Seller Information</h2>
           <div class="flex items-center gap-4">
-            <div class="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
-              <img *ngIf="getSellerAvatar()"
-                   [src]="getSellerAvatar()"
-                   [alt]="seller.name"
-                   class="w-full h-full object-cover">
-              <svg *ngIf="!getSellerAvatar()" xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M18 20a6 6 0 0 0-12 0"/><circle cx="12" cy="10" r="4"/><circle cx="12" cy="12" r="10"/>
+            <div
+              class="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden"
+            >
+              <img
+                *ngIf="getSellerAvatar()"
+                [src]="getSellerAvatar()"
+                [alt]="seller.name"
+                class="w-full h-full object-cover"
+              />
+              <svg
+                *ngIf="!getSellerAvatar()"
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-8 w-8 text-gray-400"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M18 20a6 6 0 0 0-12 0" />
+                <circle cx="12" cy="10" r="4" />
+                <circle cx="12" cy="12" r="10" />
               </svg>
             </div>
             <div>
