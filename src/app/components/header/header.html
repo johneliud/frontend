@@ -14,36 +14,39 @@
     </nav>
 
     <!-- Theme Toggler & Mobile Menu Button -->
-    <div class="flex items-center space-x-6">
-      <ng-container *ngIf="!isAuthenticated(); else authActions">
-        <button
-          (click)="openSignup()"
-          class="hidden lg:block px-8 py-2 rounded-full text-white font-medium cursor-pointer"
-        >
-          Sign Up
-        </button>
-        <button
-          (click)="openLogin()"
-          class="bg-blue-600 hover:bg-blue-700 px-8 py-2 rounded-full text-white font-bold transition-all transform hover:scale-105 active:scale-95 cursor-pointer shadow-md"
-        >
-          Login
-        </button>
-      </ng-container>
+    <div class="flex items-center space-x-3 md:space-x-6">
+      <!-- Desktop Auth Actions -->
+      <div class="hidden md:flex items-center space-x-4">
+        <ng-container *ngIf="!isAuthenticated(); else authActions">
+          <button
+            (click)="openSignup()"
+            class="hidden lg:block px-8 py-2 rounded-full text-white font-medium cursor-pointer"
+          >
+            Sign Up
+          </button>
+          <button
+            (click)="openLogin()"
+            class="bg-blue-600 hover:bg-blue-700 px-8 py-2 rounded-full text-white font-bold transition-all transform hover:scale-105 active:scale-95 cursor-pointer shadow-md"
+          >
+            Login
+          </button>
+        </ng-container>
 
-      <ng-template #authActions>
-        <a
-          routerLink="/profile"
-          class="hidden lg:block px-2 py-2 rounded-full text-white font-medium hover:text-gray-300 cursor-pointer"
-        >
-          Profile
-        </a>
-        <button
-          (click)="logout()"
-          class="border-2 border-white text-white px-8 py-2 rounded-full hover:bg-white hover:text-gray-800 font-medium flex items-center space-x-2 cursor-pointer transition-colors"
-        >
-          <span>Logout</span>
-        </button>
-      </ng-template>
+        <ng-template #authActions>
+          <a
+            routerLink="/profile"
+            class="hidden lg:block px-2 py-2 rounded-full text-white font-medium hover:text-gray-300 cursor-pointer"
+          >
+            Profile
+          </a>
+          <button
+            (click)="logout()"
+            class="border-2 border-white text-white px-8 py-2 rounded-full hover:bg-white hover:text-gray-800 font-medium flex items-center space-x-2 cursor-pointer transition-colors"
+          >
+            <span>Logout</span>
+          </button>
+        </ng-template>
+      </div>
 
       <!-- Theme Toggler (Placeholder) -->
       <button (click)="toggleTheme()" class="p-2 rounded-full hover:bg-gray-700 cursor-pointer">
@@ -97,7 +100,7 @@
       <!-- Mobile Menu Button -->
       <button
         (click)="toggleMobileMenu()"
-        class="md:hidden p-2 rounded-full hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+        class="md:hidden p-2 rounded-full hover:bg-gray-700 focus:outline-none"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -175,53 +178,6 @@
           Logout
         </button>
       </ng-template>
-      <!-- Theme Toggler in Mobile Menu -->
-      <button (click)="toggleTheme()" class="p-2 rounded-full hover:bg-gray-700 w-full">
-        <ng-container *ngIf="themeService.isDarkMode(); else lightModeIconMobile">
-          <!-- Moon icon for dark mode (mobile) -->
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="lucide lucide-moon-icon lucide-moon"
-          >
-            <path
-              d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"
-            />
-          </svg>
-        </ng-container>
-        <ng-template #lightModeIconMobile>
-          <!-- Sun icon for light mode (mobile) -->
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="lucide lucide-sun-icon lucide-sun"
-          >
-            <circle cx="12" cy="12" r="4" />
-            <path d="M12 2v2" />
-            <path d="M12 20v2" />
-            <path d="m4.93 4.93 1.41 1.41" />
-            <path d="m17.66 17.66 1.41 1.41" />
-            <path d="M2 12h2" />
-            <path d="M20 12h2" />
-            <path d="m6.34 17.66-1.41 1.41" />
-            <path d="m19.07 4.93-1.41 1.41" />
-          </svg>
-        </ng-template>
-      </button>
     </nav>
   </div>
 </header>
