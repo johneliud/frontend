@@ -7,52 +7,78 @@
       (click)="toggleFilters()"
       class="flex items-center gap-2 px-4 py-2 bg-gray-800 text-white rounded-md shadow hover:bg-gray-700 transition"
     >
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-funnel-icon lucide-funnel"><path d="M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z"/></svg>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="lucide lucide-funnel-icon lucide-funnel"
+      >
+        <path
+          d="M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z"
+        />
+      </svg>
     </button>
   </div>
 
   <!-- Filters -->
-  <div [ngClass]="{
-    'hidden md:block': !showFilters,
-    'block': showFilters
-  }" class="bg-white rounded-md shadow-lg p-4 mb-6 border border-gray-200">
+  <div
+    [ngClass]="{
+      'hidden md:block': !showFilters,
+      block: showFilters,
+    }"
+    class="bg-white rounded-md shadow-lg p-4 mb-6 border border-gray-200"
+  >
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
       <!-- Search -->
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">Search</label>
-        <input type="text"
-               [(ngModel)]="search"
-               (keyup.enter)="onSearch()"
-               placeholder="Product name"
-               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+        <input
+          type="text"
+          [(ngModel)]="search"
+          (keyup.enter)="onSearch()"
+          placeholder="Product name"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+        />
       </div>
 
       <!-- Min Price -->
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">Min Price</label>
-        <input type="number"
-               [(ngModel)]="minPrice"
-               (change)="onSearch()"
-               placeholder="0"
-               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+        <input
+          type="number"
+          [(ngModel)]="minPrice"
+          (change)="onSearch()"
+          placeholder="0"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+        />
       </div>
 
       <!-- Max Price -->
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">Max Price</label>
-        <input type="number"
-               [(ngModel)]="maxPrice"
-               (change)="onSearch()"
-               placeholder="999999"
-               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+        <input
+          type="number"
+          [(ngModel)]="maxPrice"
+          (change)="onSearch()"
+          placeholder="999999"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+        />
       </div>
 
       <!-- Sort -->
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">Sort By</label>
-        <select [(ngModel)]="filters.sortBy"
-                (change)="onSortChange()"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+        <select
+          [(ngModel)]="filters.sortBy"
+          (change)="onSortChange()"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+        >
           <option value="name">Name</option>
           <option value="price">Price</option>
         </select>
@@ -60,12 +86,16 @@
     </div>
 
     <div class="mt-4 flex gap-2">
-      <button (click)="onSearch()"
-              class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <button
+        (click)="onSearch()"
+        class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      >
         Apply Filters
       </button>
-      <button (click)="filters.sortDir = filters.sortDir === 'asc' ? 'desc' : 'asc'; onSortChange()"
-              class="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <button
+        (click)="filters.sortDir = filters.sortDir === 'asc' ? 'desc' : 'asc'; onSortChange()"
+        class="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      >
         {{ filters.sortDir === 'asc' ? '↑ Ascending' : '↓ Descending' }}
       </button>
     </div>
@@ -87,24 +117,33 @@
   </div>
 
   <!-- Products Grid -->
-  <div *ngIf="!loading && !error && products?.length" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-    <div *ngFor="let product of products" 
-         class="bg-white rounded-md shadow-lg overflow-hidden border border-gray-200 cursor-pointer hover:shadow-xl transition-shadow"
-         (click)="viewProduct(product.id)">
+  <div
+    *ngIf="!loading && !error && products?.length"
+    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+  >
+    <div
+      *ngFor="let product of products"
+      class="bg-white rounded-md shadow-lg overflow-hidden border border-gray-200 cursor-pointer hover:shadow-xl transition-shadow"
+      (click)="viewProduct(product.id)"
+    >
       <!-- Product Image -->
       <div class="h-48 bg-gray-200 flex items-center justify-center">
-        <img *ngIf="productImages.get(product.id)"
-             [src]="productImages.get(product.id)"
-             [alt]="product.name"
-             class="w-full h-full object-cover">
+        <img
+          *ngIf="productImages.get(product.id)"
+          [src]="productImages.get(product.id)"
+          [alt]="product.name"
+          class="w-full h-full object-cover"
+        />
         <span *ngIf="!productImages.get(product.id)" class="text-gray-400">No image</span>
       </div>
 
       <!-- Product Info -->
       <div class="p-4">
         <h2 class="text-xl font-bold text-gray-800 mb-2">{{ product.name }}</h2>
-        <p class="text-gray-600 text-sm mb-4">{{ product.description }}</p>
-        <p class="text-2xl font-bold text-blue-600">KES {{ product.price | currency:'KES':'':'1.2-2' }}</p>
+        <p class="text-gray-600 text-sm mb-4 truncate">{{ product.description }}</p>
+        <p class="text-2xl font-bold text-blue-600">
+          KES {{ product.price | currency: 'KES' : '' : '1.2-2' }}
+        </p>
       </div>
     </div>
   </div>
