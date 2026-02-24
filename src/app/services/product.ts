@@ -24,17 +24,17 @@ export class ProductService {
 
   getProducts(filters?: ProductFilters): Observable<Product[]> {
     let params = new HttpParams();
-    
+
     if (filters) {
       if (filters.page !== undefined) params = params.set('page', filters.page.toString());
       if (filters.size !== undefined) params = params.set('size', filters.size.toString());
       if (filters.search) params = params.set('search', filters.search);
-      if (filters.minPrice !== undefined) params = params.set('minPrice', filters.minPrice.toString());
-      if (filters.maxPrice !== undefined) params = params.set('maxPrice', filters.maxPrice.toString());
+      if (filters.minPrice !== undefined && filters.minPrice !== null) params = params.set('minPrice', filters.minPrice.toString());
+      if (filters.maxPrice !== undefined && filters.maxPrice !== null) params = params.set('maxPrice', filters.maxPrice.toString());
       if (filters.sortBy) params = params.set('sortBy', filters.sortBy);
       if (filters.sortDir) params = params.set('sortDir', filters.sortDir);
     }
-    
+
     return this.http.get<any>(this.apiUrl, { params }).pipe(
       map(response => response.data?.content || [])
     );
