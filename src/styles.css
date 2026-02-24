@@ -3,3 +3,7 @@
 * {
   font-family: "Geist Mono", monospace;
 }
+
+a, button {
+  cursor: pointer;
+}
