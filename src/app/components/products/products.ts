@@ -55,11 +55,13 @@ export class ProductsComponent implements OnInit {
         this.products = data;
         this.loading = false;
         this.loadProductImages();
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Failed loading products:', err);
         this.error = 'Failed to load products';
         this.loading = false;
+        this.cdr.detectChanges();
       },
     });
   }
