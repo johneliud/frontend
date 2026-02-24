@@ -1,6 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { ProductService, ProductFilters } from '../../services/product';
 import { MediaService } from '../../services/media';
 import { Product } from '../../models/product';
@@ -33,6 +34,7 @@ export class ProductsComponent implements OnInit {
     private productService: ProductService,
     private mediaService: MediaService,
     private cdr: ChangeDetectorRef,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -97,6 +99,10 @@ export class ProductsComponent implements OnInit {
 
   onSortChange() {
     this.loadProducts();
+  }
+
+  viewProduct(productId: string) {
+    this.router.navigate(['/products', productId]);
   }
 
   showFilters = false;

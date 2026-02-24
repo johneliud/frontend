@@ -88,7 +88,9 @@
 
   <!-- Products Grid -->
   <div *ngIf="!loading && !error && products?.length" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-    <div *ngFor="let product of products" class="bg-white rounded-md shadow-lg overflow-hidden border border-gray-200">
+    <div *ngFor="let product of products" 
+         class="bg-white rounded-md shadow-lg overflow-hidden border border-gray-200 cursor-pointer hover:shadow-xl transition-shadow"
+         (click)="viewProduct(product.id)">
       <!-- Product Image -->
       <div class="h-48 bg-gray-200 flex items-center justify-center">
         <img *ngIf="productImages.get(product.id)"
