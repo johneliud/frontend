@@ -55,6 +55,17 @@ pipeline {
                 sh 'ng build --configuration production'
             }
         }
+
+        stage('Deploy') {
+            steps {
+                echo "Deploying ${env.SERVICE_NAME} to Vercel..."
+                withCredentials([string(credentialsId: 'vercel-token', variable: 'VERCEL_TOKEN')]) {
+                    // --prod targets the production environment
+                    // --yes skips all interactive prompts (required for CI)
+                    sh 'npx vercel --prod --token=$VERCEL_TOKEN --yes'
+                }
+            }
+        }
     }
 
     post {
