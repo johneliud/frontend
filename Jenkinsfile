@@ -37,15 +37,13 @@ pipeline {
 
         stage('Test') {
             steps {
-                echo "Running Jasmine/Karma tests for ${env.SERVICE_NAME}..."
+                echo "Running Vitest tests for ${env.SERVICE_NAME}..."
                 // --watch=false exits after a single test run (required for CI)
-                // --browsers=ChromeHeadless runs without a display (required for headless agents)
-                sh 'ng test --watch=false --browsers=ChromeHeadless'
+                // --reporter=junit outputs JUnit XML via Vitest's built-in reporter
+                sh 'ng test --watch=false --reporter=junit --outputFile=test-results/results.xml'
             }
             post {
                 always {
-                    // Requires karma-junit-reporter configured in karma.conf.js
-                    // outputDir: 'test-results', outputFile: 'results.xml'
                     junit allowEmptyResults: true, testResults: 'test-results/*.xml'
                 }
             }
