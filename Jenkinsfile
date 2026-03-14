@@ -51,7 +51,7 @@ pipeline {
                 echo "Running Vitest tests for ${env.SERVICE_NAME}..."
                 // --watch=false exits after a single test run (required for CI)
                 // --reporter=junit outputs JUnit XML via Vitest's built-in reporter
-                sh 'ng test --watch=false --reporter=junit --outputFile=test-results/results.xml'
+                sh 'ng test --watch=false --reporters=junit --output-file=test-results/results.xml'
             }
             post {
                 always {
