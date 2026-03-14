@@ -1,14 +1,5 @@
 pipeline {
     agent { label 'frontend' }
-    
-    stages {
-        stage('Initialize') {
-            steps {
-                sh 'node --version'
-                sh 'npm --version'
-            }
-        }
-    }
 
     options {
         buildDiscarder(logRotator(numToKeepStr: '3'))
