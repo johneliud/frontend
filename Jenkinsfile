@@ -1,8 +1,17 @@
 pipeline {
-    agent any
+    agent { label 'frontend' }
+    
+    stages {
+        stage('Initialize') {
+            steps {
+                sh 'node --version'
+                sh 'npm --version'
+            }
+        }
+    }
 
     options {
-        buildDiscarder(logRotator(numToKeepStr: '10'))
+        buildDiscarder(logRotator(numToKeepStr: '3'))
         disableConcurrentBuilds()
         timestamps()
     }
