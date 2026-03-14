@@ -29,9 +29,20 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                echo 'Installing npm dependencies...'
-                // npm ci ensures a clean, reproducible install from package-lock.json
-                sh 'npm ci'
+                script {
+                    def lockHash = sh(script: 'sha256sum package-lock.json | cut -d" " -f1', returnStdout: true).trim()
+                    def cacheDir = "/home/john/jenkins-agent/npm-cache/${lockHash}"
+
+                    if (fileExists("${cacheDir}/node_modules")) {
+                        echo "Cache hit — restoring node_modules from cache..."
+                        sh "ln -s ${cacheDir}/node_modules node_modules"
+                    } else {
+                        echo "Cache miss — running npm ci..."
+                        sh 'npm ci'
+                        sh "mkdir -p ${cacheDir} && mv node_modules ${cacheDir}/"
+                        sh "ln -s ${cacheDir}/node_modules node_modules"
+                    }
+                }
             }
         }
 
