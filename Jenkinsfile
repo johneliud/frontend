@@ -65,6 +65,14 @@ pipeline {
                     sh 'npx vercel --prod --token=$VERCEL_TOKEN --yes'
                 }
             }
+            post {
+                failure {
+                    echo "Deployment failed. Rolling back to previous Vercel deployment..."
+                    withCredentials([string(credentialsId: 'vercel-token', variable: 'VERCEL_TOKEN')]) {
+                        sh 'npx vercel rollback --token=$VERCEL_TOKEN --yes'
+                    }
+                }
+            }
         }
     }
 
