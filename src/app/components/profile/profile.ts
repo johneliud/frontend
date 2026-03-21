@@ -14,6 +14,23 @@ interface User {
   avatar?: string;
 }
 
+interface ProductStat {
+  productId: string;
+  productName: string;
+  totalQuantity: number;
+  totalAmount: number;
+}
+
+interface BuyerStats {
+  totalSpent: number;
+  topProducts: ProductStat[];
+}
+
+interface SellerStats {
+  totalRevenue: number;
+  productStats: ProductStat[];
+}
+
 @Component({
   selector: 'app-profile',
   standalone: true,
@@ -26,6 +43,8 @@ export class ProfileComponent implements OnInit {
   loading = true;
   updating = false;
   uploadingAvatar = false;
+  buyerStats: BuyerStats | null = null;
+  sellerStats: SellerStats | null = null;
 
   name = '';
   email = '';
@@ -52,6 +71,7 @@ export class ProfileComponent implements OnInit {
         this.name = this.user!.name;
         this.email = this.user!.email;
         this.loading = false;
+        this.loadStats();
         this.cdr.detectChanges();
       },
       error: (err) => {
@@ -150,5 +170,20 @@ export class ProfileComponent implements OnInit {
 
   isSeller(): boolean {
     return this.user?.role === 'SELLER';
+  }
+
+  loadStats() {
+    if (!this.user) return;
+    if (this.isSeller()) {
+      this.http.get<any>('http://localhost:8083/api/users/profile/seller-stats').subscribe({
+        next: (r) => { this.sellerStats = r.data; this.cdr.detectChanges(); },
+        error: () => {}
+      });
+    } else {
+      this.http.get<any>('http://localhost:8083/api/users/profile/stats').subscribe({
+        next: (r) => { this.buyerStats = r.data; this.cdr.detectChanges(); },
+        error: () => {}
+      });
+    }
   }
 }
