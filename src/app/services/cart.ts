@@ -51,7 +51,7 @@ export class CartService {
     );
   }
 
-  checkout(checkoutData: { deliveryAddress: any }): Observable<Order> {
+  checkout(checkoutData: { deliveryAddress: { fullName: string; address: string; city: string; phone: string }; paymentMethod: string }): Observable<Order> {
     return this.http.post<any>(`${this.apiUrl}/checkout`, checkoutData).pipe(
       map(r => r.data || r),
       tap(() => this.cartItemCount.set(0))

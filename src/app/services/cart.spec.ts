@@ -80,7 +80,10 @@ describe('CartService', () => {
 
   it('checkout should post and reset cart count', () => {
     const order = { id: 'order1', totalAmount: 200 };
-    service.checkout({ deliveryAddress: { name: 'Test', address: 'Addr', city: 'City', phone: '123' } }).subscribe(o => {
+    service.checkout({
+      deliveryAddress: { fullName: 'Test', address: 'Addr', city: 'City', phone: '123' },
+      paymentMethod: 'PAY_ON_DELIVERY'
+    }).subscribe(o => {
       expect(o.id).toBe('order1');
       expect(service.cartCount()).toBe(0);
     });
