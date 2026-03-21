@@ -22,6 +22,7 @@ export class CheckoutComponent implements OnInit {
   placedOrder: Order | null = null;
 
   addressForm: FormGroup;
+  selectedPaymentMethod = 'PAY_ON_DELIVERY';
 
   constructor(
     private fb: FormBuilder,
@@ -66,7 +67,16 @@ export class CheckoutComponent implements OnInit {
     }
 
     this.placing = true;
-    this.cartService.checkout({ deliveryAddress: this.addressForm.value }).subscribe({
+    const checkoutData = {
+      deliveryAddress: {
+        fullName: this.addressForm.value.name,
+        address: this.addressForm.value.address,
+        city: this.addressForm.value.city,
+        phone: this.addressForm.value.phone,
+      },
+      paymentMethod: this.selectedPaymentMethod
+    };
+    this.cartService.checkout(checkoutData).subscribe({
       next: (order) => {
         this.placedOrder = order;
         this.confirmed = true;
