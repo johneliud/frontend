@@ -12,6 +12,9 @@ export interface ProductFilters {
   maxPrice?: number;
   sortBy?: string;
   sortDir?: string;
+  category?: string;
+  availableOnly?: boolean;
+  sellerId?: string;
 }
 
 @Injectable({
@@ -33,6 +36,9 @@ export class ProductService {
       if (filters.maxPrice !== undefined && filters.maxPrice !== null) params = params.set('maxPrice', filters.maxPrice.toString());
       if (filters.sortBy) params = params.set('sortBy', filters.sortBy);
       if (filters.sortDir) params = params.set('sortDir', filters.sortDir);
+      if (filters.category) params = params.set('category', filters.category);
+      if (filters.availableOnly) params = params.set('availableOnly', 'true');
+      if (filters.sellerId) params = params.set('sellerId', filters.sellerId);
     }
 
     return this.http.get<any>(this.apiUrl, { params }).pipe(
