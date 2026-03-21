@@ -4,6 +4,9 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ProductService, ProductFilters } from '../../services/product';
 import { MediaService } from '../../services/media';
+import { CartService } from '../../services/cart';
+import { AuthService } from '../../services/auth';
+import { NotificationService } from '../../services/notification';
 import { Product } from '../../models/product';
 
 @Component({
@@ -29,10 +32,17 @@ export class ProductsComponent implements OnInit {
   search = '';
   minPrice: number | null = null;
   maxPrice: number | null = null;
+  category = '';
+  availableOnly = false;
+  sellerId = '';
+  addingToCartId: string | null = null;
 
   constructor(
     private productService: ProductService,
     private mediaService: MediaService,
+    private cartService: CartService,
+    private authService: AuthService,
+    private notificationService: NotificationService,
     private cdr: ChangeDetectorRef,
     private router: Router
   ) {}
@@ -50,6 +60,9 @@ export class ProductsComponent implements OnInit {
       search: this.search || undefined,
       minPrice: this.minPrice ?? undefined,
       maxPrice: this.maxPrice ?? undefined,
+      category: this.category || undefined,
+      availableOnly: this.availableOnly || undefined,
+      sellerId: this.sellerId || undefined,
     };
 
     this.productService.getProducts(filters).subscribe({
@@ -109,5 +122,48 @@ export class ProductsComponent implements OnInit {
 
   toggleFilters() {
     this.showFilters = !this.showFilters;
+  }
+
+  get isClient(): boolean {
+    return this.authService.isAuthenticatedSignal() && this.authService.userRoleSignal() === 'client';
+  }
+
+  get activeFilters(): string[] {
+    const tags: string[] = [];
+    if (this.search) tags.push(`Search: ${this.search}`);
+    if (this.category) tags.push(`Category: ${this.category}`);
+    if (this.availableOnly) tags.push('In Stock Only');
+    if (this.sellerId) tags.push(`Seller: ${this.sellerId}`);
+    if (this.minPrice !== null) tags.push(`Min: KES ${this.minPrice}`);
+    if (this.maxPrice !== null) tags.push(`Max: KES ${this.maxPrice}`);
+    return tags;
+  }
+
+  clearFilter(tag: string) {
+    if (tag.startsWith('Search:')) this.search = '';
+    else if (tag.startsWith('Category:')) this.category = '';
+    else if (tag === 'In Stock Only') this.availableOnly = false;
+    else if (tag.startsWith('Seller:')) this.sellerId = '';
+    else if (tag.startsWith('Min:')) this.minPrice = null;
+    else if (tag.startsWith('Max:')) this.maxPrice = null;
+    this.loadProducts();
+  }
+
+  addToCart(event: Event, product: Product) {
+    event.stopPropagation();
+    this.addingToCartId = product.id;
+    this.cartService.addItem(product.id, 1).subscribe({
+      next: () => {
+        this.notificationService.success(`${product.name} added to cart`);
+        this.addingToCartId = null;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        const msg = err.error?.message || 'Failed to add to cart';
+        this.notificationService.error(msg);
+        this.addingToCartId = null;
+        this.cdr.detectChanges();
+      },
+    });
   }
 }
