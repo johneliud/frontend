@@ -1,0 +1,163 @@
+<div class="container mx-auto px-4 py-8">
+  <h1 class="text-3xl font-bold mb-6 text-gray-800">
+    {{ isSeller ? 'Incoming Orders' : 'My Orders' }}
+  </h1>
+
+  <!-- Search -->
+  <div class="bg-white rounded-md shadow-lg border border-gray-200 p-4 mb-6">
+    <div class="flex gap-2">
+      <input
+        type="text"
+        [(ngModel)]="search"
+        (keyup.enter)="onSearch()"
+        placeholder="Search by product name or order ID..."
+        class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+      <button
+        (click)="onSearch()"
+        class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+      >
+        Search
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="text-center py-12">
+    <p class="text-gray-600">Loading orders...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+    {{ error }}
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!loading && !error && orders.length === 0" class="text-center py-12">
+    <p class="text-gray-600">No orders found.</p>
+  </div>
+
+  <!-- Orders List -->
+  <div *ngIf="!loading && !error && orders.length" class="space-y-4">
+    <div
+      *ngFor="let order of orders"
+      class="bg-white rounded-md shadow-lg border border-gray-200 overflow-hidden"
+    >
+      <!-- Order Header (clickable to expand) -->
+      <div
+        class="p-4 cursor-pointer flex flex-wrap items-center gap-4"
+        (click)="toggleExpand(order.id)"
+      >
+        <div class="flex-1 min-w-0">
+          <p class="font-mono text-sm text-gray-500">{{ order.id }}</p>
+          <p class="font-semibold text-gray-800">
+            KES {{ order.totalAmount | currency: 'KES' : '' : '1.2-2' }}
+          </p>
+          <p class="text-sm text-gray-600">{{ order.createdAt | date: 'mediumDate' }}</p>
+        </div>
+
+        <span
+          class="px-3 py-1 rounded-full text-xs font-semibold"
+          [ngClass]="statusBadgeClass(order.status)"
+        >
+          {{ order.status }}
+        </span>
+
+        <!-- Buyer actions on header row -->
+        <div *ngIf="!isSeller" class="flex gap-2">
+          <button
+            *ngIf="order.status === 'PENDING'"
+            (click)="confirmCancel(order); $event.stopPropagation()"
+            [disabled]="updatingOrderId === order.id"
+            class="px-3 py-1 text-sm border border-red-500 text-red-500 rounded-md hover:bg-red-50 disabled:opacity-50"
+          >
+            Cancel
+          </button>
+          <button
+            *ngIf="order.status === 'DELIVERED' || order.status === 'CANCELLED'"
+            (click)="reorder(order); $event.stopPropagation()"
+            class="px-3 py-1 text-sm border border-blue-600 text-blue-600 rounded-md hover:bg-blue-50"
+          >
+            Reorder
+          </button>
+        </div>
+
+        <!-- Seller status update -->
+        <div *ngIf="isSeller && nextStatus(order.status) as next">
+          <button
+            (click)="updateStatus(order, next); $event.stopPropagation()"
+            [disabled]="updatingOrderId === order.id"
+            class="px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+          >
+            Mark {{ next }}
+          </button>
+        </div>
+
+        <!-- Expand icon -->
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-5 w-5 text-gray-400 transition-transform"
+          [class.rotate-180]="isExpanded(order.id)"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+        </svg>
+      </div>
+
+      <!-- Order Detail (expanded) -->
+      <div *ngIf="isExpanded(order.id)" class="border-t border-gray-200 p-4">
+        <h3 class="font-semibold text-gray-700 mb-3">Items</h3>
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="text-left text-gray-500">
+              <th class="pb-2">Product</th>
+              <th class="pb-2 text-right">Qty</th>
+              <th class="pb-2 text-right">Price</th>
+              <th class="pb-2 text-right">Subtotal</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            <tr *ngFor="let item of order.items">
+              <td class="py-2 text-gray-800">{{ item.productName }}</td>
+              <td class="py-2 text-right text-gray-600">{{ item.quantity }}</td>
+              <td class="py-2 text-right text-gray-600">KES {{ item.price | currency: 'KES' : '' : '1.2-2' }}</td>
+              <td class="py-2 text-right font-semibold text-gray-800">KES {{ (item.price * item.quantity) | currency: 'KES' : '' : '1.2-2' }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Delivery address -->
+        <div *ngIf="order.deliveryAddress" class="mt-4 border-t border-gray-200 pt-4">
+          <h3 class="font-semibold text-gray-700 mb-1">Delivery Address</h3>
+          <p class="text-sm text-gray-600">{{ order.deliveryAddress.name }}</p>
+          <p class="text-sm text-gray-600">{{ order.deliveryAddress.address }}, {{ order.deliveryAddress.city }}</p>
+          <p class="text-sm text-gray-600">{{ order.deliveryAddress.phone }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Cancel Confirmation Modal -->
+<div *ngIf="showCancelConfirm" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+  <div class="absolute inset-0 bg-black/50" (click)="dismissCancel()"></div>
+  <div class="relative bg-white rounded-md shadow-2xl p-6 w-full max-w-sm">
+    <h3 class="text-lg font-bold text-gray-800 mb-2">Cancel Order?</h3>
+    <p class="text-gray-600 mb-6 text-sm">This action cannot be undone. Are you sure you want to cancel this order?</p>
+    <div class="flex gap-3">
+      <button
+        (click)="dismissCancel()"
+        class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50"
+      >
+        Keep Order
+      </button>
+      <button
+        (click)="cancelOrder()"
+        class="flex-1 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+      >
+        Cancel Order
+      </button>
+    </div>
+  </div>
+</div>
