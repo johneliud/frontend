@@ -4,6 +4,7 @@ import { RouterLink, Router } from '@angular/router';
 import { AuthService } from '../../services/auth';
 import { ThemeService } from '../../services/theme.service';
 import { AuthModalService } from '../../services/auth-modal.service';
+import { CartService } from '../../services/cart';
 
 @Component({
   selector: 'app-header',
@@ -14,13 +15,16 @@ import { AuthModalService } from '../../services/auth-modal.service';
 })
 export class HeaderComponent {
   isSeller = computed(() => this.authService.userRoleSignal() === 'seller');
+  isClient = computed(() => this.authService.userRoleSignal() === 'client');
   isMobileMenuOpen: boolean = false;
+  cartCount = computed(() => this.cartService.cartCount());
 
   constructor(
     private authService: AuthService,
     public themeService: ThemeService,
     private router: Router,
     private modalService: AuthModalService,
+    public cartService: CartService,
   ) {}
 
   isAuthenticated(): boolean {
