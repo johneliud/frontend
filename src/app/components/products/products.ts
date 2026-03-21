@@ -152,7 +152,14 @@ export class ProductsComponent implements OnInit {
   addToCart(event: Event, product: Product) {
     event.stopPropagation();
     this.addingToCartId = product.id;
-    this.cartService.addItem(product.id, 1).subscribe({
+    this.cartService.addItem({
+      productId: product.id,
+      productName: product.name,
+      price: product.price,
+      quantity: 1,
+      sellerId: product.userId,
+      imageUrl: this.productImages.get(product.id)
+    }).subscribe({
       next: () => {
         this.notificationService.success(`${product.name} added to cart`);
         this.addingToCartId = null;
