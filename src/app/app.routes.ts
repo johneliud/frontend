@@ -7,6 +7,9 @@ import { ProductDetailComponent } from './components/product-detail/product-deta
 import { SellerDashboardComponent } from './components/seller-dashboard/seller-dashboard';
 import { MediaManagementComponent } from './components/media-management/media-management';
 import { ProfileComponent } from './components/profile/profile';
+import { CartComponent } from './components/cart/cart';
+import { CheckoutComponent } from './components/checkout/checkout';
+import { OrdersComponent } from './components/orders/orders';
 import { AuthGuard } from './guards/auth.guard';
 import { RoleGuard } from './guards/role.guard';
 
@@ -17,6 +20,21 @@ export const routes: Routes = [
   {
     path: 'profile',
     component: ProfileComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'cart',
+    component: CartComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'checkout',
+    component: CheckoutComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'orders',
+    component: OrdersComponent,
     canActivate: [AuthGuard],
   },
   {
