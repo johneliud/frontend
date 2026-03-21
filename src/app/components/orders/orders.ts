@@ -112,7 +112,13 @@ export class OrdersComponent implements OnInit {
   reorder(order: Order) {
     let addCount = 0;
     order.items.forEach(item => {
-      this.cartService.addItem(item.productId, item.quantity).subscribe({
+      this.cartService.addItem({
+        productId: item.productId,
+        productName: item.productName,
+        price: item.price,
+        quantity: item.quantity,
+        sellerId: ''
+      }).subscribe({
         next: () => {
           addCount++;
           if (addCount === order.items.length) {
