@@ -1,0 +1,117 @@
+<div class="container mx-auto px-4 py-8">
+  <!-- Loading -->
+  <div *ngIf="loadingCart" class="text-center py-12">
+    <p class="text-gray-600">Loading...</p>
+  </div>
+
+  <!-- Order Confirmed -->
+  <div *ngIf="!loadingCart && confirmed && placedOrder" class="max-w-lg mx-auto text-center py-12">
+    <div class="bg-white rounded-md shadow-lg border border-gray-200 p-8">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-green-500 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <h1 class="text-2xl font-bold text-gray-800 mb-2">Order Placed!</h1>
+      <p class="text-gray-600 mb-2">Order ID: <span class="font-mono font-semibold text-gray-800">{{ placedOrder.id }}</span></p>
+      <p class="text-gray-600 mb-2">Total: <span class="font-bold text-blue-600">KES {{ placedOrder.totalAmount | currency: 'KES' : '' : '1.2-2' }}</span></p>
+      <p class="text-gray-600 mb-6">Payment: Pay on Delivery</p>
+      <button
+        (click)="goToOrders()"
+        class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+      >
+        View My Orders
+      </button>
+    </div>
+  </div>
+
+  <!-- Checkout Form -->
+  <div *ngIf="!loadingCart && !confirmed" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Delivery Address Form -->
+    <div class="bg-white rounded-md shadow-lg border border-gray-200 p-6">
+      <h2 class="text-xl font-bold text-gray-800 mb-4">Delivery Address</h2>
+      <form [formGroup]="addressForm" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+          <input
+            type="text"
+            formControlName="name"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            [class.border-red-500]="hasError('name', 'required') || hasError('name', 'minlength')"
+            placeholder="John Doe"
+          />
+          <p *ngIf="hasError('name', 'required')" class="text-red-500 text-xs mt-1">Name is required</p>
+          <p *ngIf="hasError('name', 'minlength')" class="text-red-500 text-xs mt-1">Name must be at least 2 characters</p>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Address</label>
+          <input
+            type="text"
+            formControlName="address"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            [class.border-red-500]="hasError('address', 'required') || hasError('address', 'minlength')"
+            placeholder="123 Main Street"
+          />
+          <p *ngIf="hasError('address', 'required')" class="text-red-500 text-xs mt-1">Address is required</p>
+          <p *ngIf="hasError('address', 'minlength')" class="text-red-500 text-xs mt-1">Address must be at least 5 characters</p>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">City</label>
+          <input
+            type="text"
+            formControlName="city"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            [class.border-red-500]="hasError('city', 'required')"
+            placeholder="Nairobi"
+          />
+          <p *ngIf="hasError('city', 'required')" class="text-red-500 text-xs mt-1">City is required</p>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+          <input
+            type="tel"
+            formControlName="phone"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            [class.border-red-500]="hasError('phone', 'required') || hasError('phone', 'pattern')"
+            placeholder="+254 700 000 000"
+          />
+          <p *ngIf="hasError('phone', 'required')" class="text-red-500 text-xs mt-1">Phone is required</p>
+          <p *ngIf="hasError('phone', 'pattern')" class="text-red-500 text-xs mt-1">Enter a valid phone number</p>
+        </div>
+
+        <div class="pt-2">
+          <div class="border border-gray-200 rounded-md p-3 mb-4 bg-gray-50">
+            <p class="text-sm font-medium text-gray-700">Payment Method</p>
+            <p class="text-sm text-gray-600 mt-1">Pay on Delivery</p>
+          </div>
+          <button
+            type="button"
+            (click)="placeOrder()"
+            [disabled]="placing"
+            class="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed font-semibold"
+          >
+            {{ placing ? 'Placing Order...' : 'Place Order' }}
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Order Summary -->
+    <div class="bg-white rounded-md shadow-lg border border-gray-200 p-6 h-fit">
+      <h2 class="text-xl font-bold text-gray-800 mb-4">Order Summary</h2>
+      <div *ngIf="cart" class="space-y-2 mb-4">
+        <div *ngFor="let item of cart.items" class="flex justify-between text-sm text-gray-600">
+          <span class="truncate mr-2">{{ item.productName }} x{{ item.quantity }}</span>
+          <span>KES {{ (item.price * item.quantity) | currency: 'KES' : '' : '1.2-2' }}</span>
+        </div>
+      </div>
+      <div class="border-t border-gray-200 pt-4">
+        <div class="flex justify-between font-bold text-gray-800">
+          <span>Total</span>
+          <span>KES {{ total | currency: 'KES' : '' : '1.2-2' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
