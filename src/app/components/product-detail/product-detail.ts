@@ -99,7 +99,14 @@ export class ProductDetailComponent implements OnInit {
   addToCart() {
     if (!this.product) return;
     this.addingToCart = true;
-    this.cartService.addItem(this.product.id, this.quantity).subscribe({
+    this.cartService.addItem({
+      productId: this.product.id,
+      productName: this.product.name,
+      price: this.product.price,
+      quantity: this.quantity,
+      sellerId: this.product.userId,
+      imageUrl: this.images[0]
+    }).subscribe({
       next: () => {
         this.notificationService.success(`${this.product.name} added to cart`);
         this.addingToCart = false;
