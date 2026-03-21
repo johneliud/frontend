@@ -4,12 +4,24 @@
     <a routerLink="/" class="text-2xl font-bold">Buy 01</a>
 
     <!-- Desktop Navigation -->
-    <nav class="hidden lg:flex space-x-8">
+    <nav class="hidden lg:flex space-x-8 items-center">
       <a routerLink="/products" class="hover:text-gray-300">Products</a>
-      <!-- Conditional rendering for Dashboard -->
+      <!-- Seller links -->
       <ng-container *ngIf="isSeller()">
         <a routerLink="/seller/dashboard" class="hover:text-gray-300">Dashboard</a>
         <a routerLink="/seller/media" class="hover:text-gray-300">Media</a>
+      </ng-container>
+      <!-- Auth links -->
+      <ng-container *ngIf="isAuthenticated()">
+        <a routerLink="/orders" class="hover:text-gray-300">Orders</a>
+        <!-- Cart (clients only) -->
+        <a *ngIf="isClient()" routerLink="/cart" class="relative hover:text-gray-300">
+          Cart
+          <span
+            *ngIf="cartCount() > 0"
+            class="absolute -top-2 -right-2 w-5 h-5 bg-blue-600 text-white text-xs rounded-full flex items-center justify-center"
+          >{{ cartCount() }}</span>
+        </a>
       </ng-container>
     </nav>
 
@@ -144,6 +156,21 @@
           (click)="toggleMobileMenu()"
           class="block w-full text-center py-3 hover:bg-gray-700 rounded transition-colors"
           >Media</a
+        >
+      </ng-container>
+      <ng-container *ngIf="isAuthenticated()">
+        <a
+          routerLink="/orders"
+          (click)="toggleMobileMenu()"
+          class="block w-full text-center py-3 hover:bg-gray-700 rounded transition-colors"
+          >Orders</a
+        >
+        <a
+          *ngIf="isClient()"
+          routerLink="/cart"
+          (click)="toggleMobileMenu()"
+          class="block w-full text-center py-3 hover:bg-gray-700 rounded transition-colors"
+          >Cart<span *ngIf="cartCount() > 0" class="ml-1 text-blue-400">({{ cartCount() }})</span></a
         >
       </ng-container>
 
