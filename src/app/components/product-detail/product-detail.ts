@@ -1,13 +1,17 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { MediaService } from '../../services/media';
+import { CartService } from '../../services/cart';
+import { AuthService } from '../../services/auth';
+import { NotificationService } from '../../services/notification';
 
 @Component({
   selector: 'app-product-detail',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './product-detail.html',
   styleUrl: './product-detail.css',
 })
@@ -17,12 +21,17 @@ export class ProductDetailComponent implements OnInit {
   images: string[] = [];
   loading = true;
   error: string | null = null;
+  quantity = 1;
+  addingToCart = false;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private http: HttpClient,
     private mediaService: MediaService,
+    private cartService: CartService,
+    private authService: AuthService,
+    private notificationService: NotificationService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -81,5 +90,27 @@ export class ProductDetailComponent implements OnInit {
 
   goBack() {
     this.router.navigate(['/products']);
+  }
+
+  get isClient(): boolean {
+    return this.authService.isAuthenticatedSignal() && this.authService.userRoleSignal() === 'client';
+  }
+
+  addToCart() {
+    if (!this.product) return;
+    this.addingToCart = true;
+    this.cartService.addItem(this.product.id, this.quantity).subscribe({
+      next: () => {
+        this.notificationService.success(`${this.product.name} added to cart`);
+        this.addingToCart = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        const msg = err.error?.message || 'Failed to add to cart';
+        this.notificationService.error(msg);
+        this.addingToCart = false;
+        this.cdr.detectChanges();
+      },
+    });
   }
 }
