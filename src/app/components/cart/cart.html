@@ -1,0 +1,119 @@
+<div class="container mx-auto px-4 py-8">
+  <h1 class="text-3xl font-bold mb-6 text-gray-800">Shopping Cart</h1>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="text-center py-12">
+    <p class="text-gray-600">Loading cart...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+    {{ error }}
+  </div>
+
+  <!-- Empty Cart -->
+  <div *ngIf="!loading && !error && isEmpty" class="text-center py-16">
+    <p class="text-gray-600 text-lg mb-6">Your cart is empty.</p>
+    <a
+      routerLink="/products"
+      class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+    >
+      Browse Products
+    </a>
+  </div>
+
+  <!-- Cart Content -->
+  <div *ngIf="!loading && !error && !isEmpty" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Items List -->
+    <div class="lg:col-span-2 space-y-4">
+      <div
+        *ngFor="let item of cart!.items"
+        class="bg-white rounded-md shadow-lg border border-gray-200 p-4 flex items-center gap-4"
+      >
+        <!-- Item Info -->
+        <div class="flex-1 min-w-0">
+          <p class="font-semibold text-gray-800 truncate">{{ item.productName }}</p>
+          <p class="text-blue-600 font-bold">KES {{ item.price | currency: 'KES' : '' : '1.2-2' }}</p>
+        </div>
+
+        <!-- Quantity Controls -->
+        <div class="flex items-center gap-2">
+          <button
+            (click)="updateQuantity(item, -1)"
+            [disabled]="updatingItemId === item.id"
+            class="w-8 h-8 rounded-md border border-gray-300 hover:bg-gray-100 flex items-center justify-center disabled:opacity-50"
+          >
+            -
+          </button>
+          <span class="w-8 text-center font-medium text-gray-800">{{ item.quantity }}</span>
+          <button
+            (click)="updateQuantity(item, 1)"
+            [disabled]="updatingItemId === item.id"
+            class="w-8 h-8 rounded-md border border-gray-300 hover:bg-gray-100 flex items-center justify-center disabled:opacity-50"
+          >
+            +
+          </button>
+        </div>
+
+        <!-- Subtotal -->
+        <p class="w-24 text-right font-semibold text-gray-800">
+          KES {{ getItemSubtotal(item) | currency: 'KES' : '' : '1.2-2' }}
+        </p>
+
+        <!-- Remove -->
+        <button
+          (click)="removeItem(item)"
+          [disabled]="updatingItemId === item.id"
+          class="text-red-500 hover:text-red-700 disabled:opacity-50 ml-2"
+          aria-label="Remove item"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Clear Cart -->
+      <div class="flex justify-end">
+        <button
+          (click)="clearCart()"
+          class="text-sm text-red-500 hover:text-red-700"
+        >
+          Clear cart
+        </button>
+      </div>
+    </div>
+
+    <!-- Order Summary -->
+    <div class="bg-white rounded-md shadow-lg border border-gray-200 p-6 h-fit">
+      <h2 class="text-xl font-bold text-gray-800 mb-4">Order Summary</h2>
+
+      <div class="space-y-2 mb-4">
+        <div *ngFor="let item of cart!.items" class="flex justify-between text-sm text-gray-600">
+          <span class="truncate mr-2">{{ item.productName }} x{{ item.quantity }}</span>
+          <span>KES {{ getItemSubtotal(item) | currency: 'KES' : '' : '1.2-2' }}</span>
+        </div>
+      </div>
+
+      <div class="border-t border-gray-200 pt-4 mb-6">
+        <div class="flex justify-between font-bold text-gray-800">
+          <span>Total</span>
+          <span>KES {{ cart!.totalAmount | currency: 'KES' : '' : '1.2-2' }}</span>
+        </div>
+      </div>
+
+      <button
+        (click)="proceedToCheckout()"
+        class="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-semibold"
+      >
+        Proceed to Checkout
+      </button>
+      <a
+        routerLink="/products"
+        class="block text-center mt-3 text-sm text-blue-600 hover:text-blue-700"
+      >
+        Continue Shopping
+      </a>
+    </div>
+  </div>
+</div>
