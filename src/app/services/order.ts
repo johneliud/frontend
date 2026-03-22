@@ -37,6 +37,6 @@ export class OrderService {
   }
 
   cancelOrder(id: string): Observable<Order> {
-    return this.http.delete<any>(`${this.apiUrl}/${id}`).pipe(map(r => r.data));
+    return this.http.put<any>(`${this.apiUrl}/${id}/cancel`, {}).pipe(map(r => r.data));
   }
 }
