@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { ProductService, ProductFilters } from '../../services/product';
 import { MediaService } from '../../services/media';
 import { CartService } from '../../services/cart';
@@ -12,13 +12,14 @@ import { Product } from '../../models/product';
 @Component({
   selector: 'app-products',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './products.html',
   styleUrl: './products.css',
 })
 export class ProductsComponent implements OnInit {
   products: Product[] = [];
   productImages = new Map<string, string>();
+  productQuantities = new Map<string, number>();
   loading = true;
   error: string | null = null;
 
@@ -149,19 +150,42 @@ export class ProductsComponent implements OnInit {
     this.loadProducts();
   }
 
+  getQuantity(productId: string): number {
+    return this.productQuantities.get(productId) || 1;
+  }
+
+  incrementQuantity(productId: string, maxQuantity: number) {
+    const current = this.getQuantity(productId);
+    if (current < maxQuantity) {
+      this.productQuantities.set(productId, current + 1);
+    }
+  }
+
+  decrementQuantity(productId: string) {
+    const current = this.getQuantity(productId);
+    if (current > 1) {
+      this.productQuantities.set(productId, current - 1);
+    }
+  }
+
   addToCart(event: Event, product: Product) {
     event.stopPropagation();
     this.addingToCartId = product.id;
+    const quantity = this.getQuantity(product.id);
     this.cartService.addItem({
       productId: product.id,
       productName: product.name,
       price: product.price,
-      quantity: 1,
+      quantity: quantity,
       sellerId: product.userId,
       imageUrl: this.productImages.get(product.id)
     }).subscribe({
       next: () => {
-        this.notificationService.success(`${product.name} added to cart`);
+        const msg = quantity > 1 
+          ? `${quantity} ${product.name} added to cart`
+          : `${product.name} added to cart`;
+        this.notificationService.success(msg);
+        this.productQuantities.set(product.id, 1);
         this.addingToCartId = null;
         this.cdr.detectChanges();
       },
