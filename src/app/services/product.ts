@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Product } from '../models/product';
+import { environment } from '../../environments/environment';
 
 export interface ProductFilters {
   page?: number;
@@ -21,7 +22,7 @@ export interface ProductFilters {
   providedIn: 'root',
 })
 export class ProductService {
-  private apiUrl = 'http://localhost:8083/api/products';
+  private apiUrl = `${environment.apiUrl}/api/products`;
 
   constructor(private http: HttpClient) {}
 

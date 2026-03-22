@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { MediaService } from '../../services/media';
+import { environment } from '../../../environments/environment';
 import { CartService } from '../../services/cart';
 import { AuthService } from '../../services/auth';
 import { AuthModalService } from '../../services/auth-modal.service';
@@ -48,7 +49,7 @@ export class ProductDetailComponent implements OnInit {
   }
 
   loadProduct(productId: string) {
-    this.http.get<any>(`http://localhost:8083/api/products/${productId}`).subscribe({
+    this.http.get<any>(`${environment.apiUrl}/api/products/${productId}`).subscribe({
       next: (response) => {
         this.product = response.data;
         this.loadSeller(this.product.userId);
@@ -65,7 +66,7 @@ export class ProductDetailComponent implements OnInit {
   }
 
   loadSeller(userId: string) {
-    this.http.get<any>(`http://localhost:8083/api/users/${userId}`).subscribe({
+    this.http.get<any>(`${environment.apiUrl}/api/users/${userId}`).subscribe({
       next: (response) => {
         this.seller = response.data;
         this.loading = false;
@@ -109,7 +110,7 @@ export class ProductDetailComponent implements OnInit {
 
   getSellerAvatar(): string | null {
     if (!this.seller?.avatar) return null;
-    return `http://localhost:8083/api/users/avatars/${this.seller.avatar}`;
+    return `${environment.apiUrl}/api/users/avatars/${this.seller.avatar}`;
   }
 
   goBack() {

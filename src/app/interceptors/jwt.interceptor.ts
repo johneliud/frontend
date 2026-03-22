@@ -20,21 +20,9 @@ export class JwtInterceptor implements HttpInterceptor {
     const token = this.authService.getToken();
 
     if (token) {
-      let userId = '';
-      let userRole = '';
-      try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        userId = payload.sub || '';
-        userRole = payload.role || '';
-      } catch (e) {
-        console.error('Failed to parse token', e);
-      }
-
       request = request.clone({
         setHeaders: {
-          Authorization: `Bearer ${token}`,
-          'X-User-Id': userId,
-          'X-User-Role': userRole
+          Authorization: `Bearer ${token}`
         }
       });
     }

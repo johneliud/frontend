@@ -4,12 +4,13 @@ import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { Cart } from '../models/cart';
 import { Order } from '../models/order';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CartService {
-  private apiUrl = 'http://localhost:8083/api/cart';
+  private apiUrl = `${environment.apiUrl}/api/cart`;
 
   private cartItemCount = signal<number>(0);
   cartCount = this.cartItemCount.asReadonly();

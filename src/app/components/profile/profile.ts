@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth';
 import { HttpClient } from '@angular/common/http';
 import { NotificationService } from '../../services/notification';
+import { environment } from '../../../environments/environment';
 
 interface User {
   id: string;
@@ -65,7 +66,7 @@ export class ProfileComponent implements OnInit {
 
   loadProfile() {
     this.loading = true;
-    this.http.get<any>('http://localhost:8083/api/users/profile').subscribe({
+    this.http.get<any>(`${environment.apiUrl}/api/users/profile`).subscribe({
       next: (response) => {
         this.user = response.data;
         this.name = this.user!.name;
@@ -85,7 +86,7 @@ export class ProfileComponent implements OnInit {
 
   getAvatarUrl(): string | null {
     if (!this.user?.avatar) return null;
-    return `http://localhost:8083/api/users/avatars/${this.user.avatar}`;
+    return `${environment.apiUrl}/api/users/avatars/${this.user.avatar}`;
   }
 
   onAvatarSelected(event: Event) {
@@ -121,7 +122,7 @@ export class ProfileComponent implements OnInit {
     }
 
     this.updating = true;
-    this.http.put<any>('http://localhost:8083/api/users/profile', {
+    this.http.put<any>(`${environment.apiUrl}/api/users/profile`, {
       name: this.name,
       email: this.email
     }).subscribe({
@@ -150,7 +151,7 @@ export class ProfileComponent implements OnInit {
     const formData = new FormData();
     formData.append('avatar', this.selectedAvatar);
 
-    this.http.put<any>('http://localhost:8083/api/users/profile/avatar', formData).subscribe({
+    this.http.put<any>(`${environment.apiUrl}/api/users/profile/avatar`, formData).subscribe({
       next: (response) => {
         this.user = response.data;
         this.selectedAvatar = null;
@@ -175,12 +176,12 @@ export class ProfileComponent implements OnInit {
   loadStats() {
     if (!this.user) return;
     if (this.isSeller()) {
-      this.http.get<any>('http://localhost:8083/api/users/profile/seller-stats').subscribe({
+      this.http.get<any>(`${environment.apiUrl}/api/users/profile/seller-stats`).subscribe({
         next: (r) => { this.sellerStats = r.data; this.cdr.detectChanges(); },
         error: () => {}
       });
     } else {
-      this.http.get<any>('http://localhost:8083/api/users/profile/stats').subscribe({
+      this.http.get<any>(`${environment.apiUrl}/api/users/profile/stats`).subscribe({
         next: (r) => { this.buyerStats = r.data; this.cdr.detectChanges(); },
         error: () => {}
       });
