@@ -19,6 +19,8 @@ export class ProductDetailComponent implements OnInit {
   product: any = null;
   seller: any = null;
   images: string[] = [];
+  currentImageIndex = 0;
+  lightboxOpen = false;
   loading = true;
   error: string | null = null;
   quantity = 1;
@@ -77,10 +79,29 @@ export class ProductDetailComponent implements OnInit {
     this.mediaService.getMediaByProduct(productId).subscribe({
       next: (media) => {
         this.images = media.map(m => this.mediaService.getMediaUrl(m.id));
+        this.currentImageIndex = 0;
         this.cdr.detectChanges();
       },
       error: () => {}
     });
+  }
+
+  previousImage() {
+    this.currentImageIndex = this.currentImageIndex > 0 ? this.currentImageIndex - 1 : this.images.length - 1;
+  }
+
+  nextImage() {
+    this.currentImageIndex = this.currentImageIndex < this.images.length - 1 ? this.currentImageIndex + 1 : 0;
+  }
+
+  openLightbox() {
+    this.lightboxOpen = true;
+    document.body.style.overflow = 'hidden';
+  }
+
+  closeLightbox() {
+    this.lightboxOpen = false;
+    document.body.style.overflow = '';
   }
 
   getSellerAvatar(): string | null {
@@ -96,6 +117,18 @@ export class ProductDetailComponent implements OnInit {
     return this.authService.isAuthenticatedSignal() && this.authService.userRoleSignal() === 'client';
   }
 
+  decrementQuantity() {
+    if (this.quantity > 1) {
+      this.quantity--;
+    }
+  }
+
+  incrementQuantity() {
+    if (this.quantity < this.product.quantity) {
+      this.quantity++;
+    }
+  }
+
   addToCart() {
     if (!this.product) return;
     this.addingToCart = true;
@@ -105,7 +138,7 @@ export class ProductDetailComponent implements OnInit {
       price: this.product.price,
       quantity: this.quantity,
       sellerId: this.product.userId,
-      imageUrl: this.images[0]
+      imageUrl: this.images[0] || undefined
     }).subscribe({
       next: () => {
         this.notificationService.success(`${this.product.name} added to cart`);
