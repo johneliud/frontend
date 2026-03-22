@@ -53,8 +53,8 @@ export class CartComponent implements OnInit {
       this.removeItem(item);
       return;
     }
-    this.updatingItemId = item.id;
-    this.cartService.updateItem(item.id, newQty).subscribe({
+    this.updatingItemId = item.productId;
+    this.cartService.updateItem(item.productId, newQty).subscribe({
       next: (cart) => {
         this.cart = cart;
         this.updatingItemId = null;
@@ -70,8 +70,8 @@ export class CartComponent implements OnInit {
   }
 
   removeItem(item: CartItem) {
-    this.updatingItemId = item.id;
-    this.cartService.removeItem(item.id).subscribe({
+    this.updatingItemId = item.productId;
+    this.cartService.removeItem(item.productId).subscribe({
       next: (cart) => {
         this.cart = cart;
         this.updatingItemId = null;
