@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { Product } from '../../../models/product';
 import { NotificationService } from '../../../services/notification';
+import { AuthService } from '../../../services/auth';
+import { AuthModalService } from '../../../services/auth-modal.service';
 
 @Component({
   selector: 'app-product-card',
@@ -145,6 +147,8 @@ export class ProductCardComponent {
   constructor(
     private router: Router,
     private notificationService: NotificationService,
+    private authService: AuthService,
+    private authModalService: AuthModalService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -167,6 +171,12 @@ export class ProductCardComponent {
 
   onAddToCart(event: Event) {
     event.stopPropagation();
+    
+    if (!this.authService.isAuthenticated()) {
+      this.authModalService.openSignin();
+      return;
+    }
+    
     this.addingToCart = true;
     
     const item = {
