@@ -122,6 +122,10 @@ export class ProductsComponent implements OnInit {
     return this.authService.isAuthenticatedSignal() && this.authService.userRoleSignal() === 'client';
   }
 
+  get isSeller(): boolean {
+    return this.authService.userRoleSignal() === 'seller';
+  }
+
   get activeFilters(): string[] {
     const tags: string[] = [];
     if (this.search) tags.push(`Search: ${this.search}`);
@@ -144,6 +148,10 @@ export class ProductsComponent implements OnInit {
   }
 
   onAddToCart(event: { product: Product; quantity: number }) {
+    if (!this.authService.isAuthenticatedSignal()) {
+      this.router.navigate(['/login']);
+      return;
+    }
     const { product, quantity } = event;
     this.cartService.addItem({
       productId: product.id,
