@@ -7,18 +7,8 @@
       (click)="toggleFilters()"
       class="flex items-center gap-2 px-4 py-2 bg-gray-800 text-white rounded-md shadow hover:bg-gray-700 transition"
     >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <path d="M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z" />
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
       </svg>
       Filters
     </button>
@@ -40,7 +30,7 @@
           type="text"
           [(ngModel)]="search"
           (keyup.enter)="onSearch()"
-          placeholder="Name or description"
+          placeholder="Search products..."
           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
         />
       </div>
@@ -135,23 +125,23 @@
     </span>
   </div>
 
-  <!-- Loading State -->
-  <div *ngIf="loading" class="text-center py-12">
-    <div class="animate-spin w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full mx-auto"></div>
-    <p class="text-gray-600 mt-4">Loading products...</p>
+  <!-- Loading State with Skeletons -->
+  <div *ngIf="loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <app-skeleton-card *ngFor="let item of skeletonItems"></app-skeleton-card>
   </div>
 
   <!-- Error State -->
-  <div *ngIf="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+  <div *ngIf="error && !loading" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
     {{ error }}
   </div>
 
   <!-- Empty State -->
-  <div *ngIf="!loading && !error && products?.length === 0" class="text-center py-12">
-    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+  <div *ngIf="!loading && !error && products?.length === 0" class="text-center py-16">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20 mx-auto text-gray-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
     </svg>
-    <p class="text-gray-600">No products available</p>
+    <h3 class="text-lg font-medium text-gray-900 mb-2">No products found</h3>
+    <p class="text-gray-500">Try adjusting your filters or search terms.</p>
   </div>
 
   <!-- Products Grid -->
@@ -159,88 +149,13 @@
     *ngIf="!loading && !error && products?.length"
     class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
   >
-    <div
+    <app-product-card
       *ngFor="let product of products"
-      class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-xl transition-all duration-300 group flex flex-col"
-    >
-      <!-- Product Image -->
-      <div class="h-48 bg-gray-100 flex items-center justify-center relative cursor-pointer overflow-hidden" [routerLink]="['/products', product.id]">
-        <img
-          *ngIf="productImages.get(product.id)"
-          [src]="productImages.get(product.id)"
-          [alt]="product.name"
-          class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-        />
-        <div *ngIf="!productImages.get(product.id)" class="text-gray-400">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-          </svg>
-        </div>
-        <!-- Stock Badge -->
-        <div class="absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-semibold" [class.bg-green-100]="product.quantity > 0" [class.text-green-800]="product.quantity > 0" [class.bg-red-100]="product.quantity === 0" [class.text-red-800]="product.quantity === 0">
-          {{ product.quantity > 0 ? 'In Stock' : 'Out of Stock' }}
-        </div>
-        <!-- Quick View Overlay -->
-        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-          <span class="text-white font-medium">View Details</span>
-        </div>
-      </div>
-
-      <!-- Product Info -->
-      <div class="p-4 flex flex-col flex-grow">
-        <h2 class="text-lg font-bold text-gray-800 mb-1 line-clamp-1">{{ product.name }}</h2>
-        <p *ngIf="product.category" class="text-xs text-blue-600 font-medium mb-1 uppercase tracking-wide">{{ product.category }}</p>
-        <p class="text-gray-500 text-sm mb-3 line-clamp-2 flex-grow">{{ product.description }}</p>
-        
-        <div class="flex items-center justify-between mb-3">
-          <p class="text-2xl font-bold text-blue-600">KES {{ product.price | number:'1.2-2' }}</p>
-          <p class="text-sm text-gray-500">{{ product.quantity }} left</p>
-        </div>
-
-        <!-- Add to Cart Section with Quantity -->
-        <div *ngIf="isClient" class="mt-auto">
-          <div *ngIf="product.quantity > 0" class="flex items-center gap-2">
-            <!-- Quantity Selector -->
-            <div class="flex items-center border-2 border-gray-200 rounded-lg flex-shrink-0">
-              <button
-                (click)="decrementQuantity(product.id); $event.stopPropagation()"
-                class="w-9 h-9 flex items-center justify-center hover:bg-gray-100 rounded-l-lg transition-colors"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
-                </svg>
-              </button>
-              <span class="w-10 text-center font-semibold text-sm">{{ getQuantity(product.id) }}</span>
-              <button
-                (click)="incrementQuantity(product.id, product.quantity); $event.stopPropagation()"
-                class="w-9 h-9 flex items-center justify-center hover:bg-gray-100 rounded-r-lg transition-colors"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                </svg>
-              </button>
-            </div>
-            
-            <!-- Add to Cart Button -->
-            <button
-              (click)="addToCart($event, product)"
-              [disabled]="addingToCartId === product.id"
-              class="flex-1 py-2 px-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 text-sm font-semibold flex items-center justify-center gap-2 transition-colors"
-            >
-              <svg *ngIf="addingToCartId !== product.id" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-              </svg>
-              <span *ngIf="addingToCartId === product.id" class="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full"></span>
-              {{ addingToCartId === product.id ? 'Adding...' : 'Add' }}
-            </button>
-          </div>
-          
-          <!-- Out of Stock -->
-          <div *ngIf="product.quantity === 0" class="text-center py-2 bg-gray-100 text-gray-500 rounded-lg text-sm font-medium">
-            Out of Stock
-          </div>
-        </div>
-      </div>
-    </div>
+      [product]="product"
+      [imageUrl]="productImages.get(product.id) || null"
+      [showAddToCart]="isClient"
+      [imageHeight]="192"
+      (addToCart)="onAddToCart($event)"
+    ></app-product-card>
   </div>
 </div>
