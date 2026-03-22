@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -6,6 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { MediaService } from '../../services/media';
 import { CartService } from '../../services/cart';
 import { AuthService } from '../../services/auth';
+import { AuthModalService } from '../../services/auth-modal.service';
 import { NotificationService } from '../../services/notification';
 
 @Component({
@@ -16,6 +17,8 @@ import { NotificationService } from '../../services/notification';
   styleUrl: './product-detail.css',
 })
 export class ProductDetailComponent implements OnInit {
+  private authModalService = inject(AuthModalService);
+  
   product: any = null;
   seller: any = null;
   images: string[] = [];
@@ -117,6 +120,10 @@ export class ProductDetailComponent implements OnInit {
     return this.authService.isAuthenticatedSignal() && this.authService.userRoleSignal() === 'client';
   }
 
+  get isSeller(): boolean {
+    return this.authService.userRoleSignal() === 'seller';
+  }
+
   decrementQuantity() {
     if (this.quantity > 1) {
       this.quantity--;
@@ -130,6 +137,10 @@ export class ProductDetailComponent implements OnInit {
   }
 
   addToCart() {
+    if (!this.authService.isAuthenticated()) {
+      this.authModalService.openSignin();
+      return;
+    }
     if (!this.product) return;
     this.addingToCart = true;
     this.cartService.addItem({
