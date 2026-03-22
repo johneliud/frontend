@@ -2,6 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ProductService } from '../../services/product';
+import { MediaService } from '../../services/media';
 import { NotificationService } from '../../services/notification';
 import { Product } from '../../models/product';
 
@@ -14,6 +15,7 @@ import { Product } from '../../models/product';
 })
 export class SellerDashboardComponent implements OnInit {
   products: Product[] = [];
+  productImages = new Map<string, string>();
   loading = false;
   showForm = false;
   editMode = false;
@@ -22,9 +24,16 @@ export class SellerDashboardComponent implements OnInit {
   showDeleteConfirm = false;
   productToDelete: Product | null = null;
 
+  selectedImageFile: File | null = null;
+  selectedImagePreview: string | null = null;
+  uploading = false;
+  submitting = false;
+  imageError: string | null = null;
+
   constructor(
     private fb: FormBuilder,
     private productService: ProductService,
+    private mediaService: MediaService,
     private notificationService: NotificationService,
     private cdr: ChangeDetectorRef
   ) {
@@ -45,6 +54,7 @@ export class SellerDashboardComponent implements OnInit {
     this.productService.getSellerProducts().subscribe({
       next: (data) => {
         this.products = data;
+        this.loadProductImages();
         this.loading = false;
         this.cdr.detectChanges();
       },
@@ -56,10 +66,25 @@ export class SellerDashboardComponent implements OnInit {
     });
   }
 
+  loadProductImages() {
+    this.products.forEach(product => {
+      this.mediaService.getMediaByProduct(product.id).subscribe({
+        next: (media) => {
+          if (media.length > 0) {
+            this.productImages.set(product.id, this.mediaService.getMediaUrl(media[0].id));
+            this.cdr.detectChanges();
+          }
+        },
+        error: () => {}
+      });
+    });
+  }
+
   openCreateForm() {
     this.editMode = false;
     this.selectedProduct = null;
     this.productForm.reset();
+    this.clearImageSelection();
     this.showForm = true;
   }
 
@@ -67,6 +92,8 @@ export class SellerDashboardComponent implements OnInit {
     this.editMode = true;
     this.selectedProduct = product;
     this.productForm.patchValue(product);
+    this.selectedImageFile = null;
+    this.selectedImagePreview = this.productImages.get(product.id) || null;
     this.showForm = true;
   }
 
@@ -74,37 +101,145 @@ export class SellerDashboardComponent implements OnInit {
     this.showForm = false;
     this.productForm.reset();
     this.selectedProduct = null;
+    this.clearImageSelection();
+  }
+
+  clearImageSelection() {
+    this.selectedImageFile = null;
+    this.selectedImagePreview = null;
+    this.imageError = null;
+  }
+
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      this.processFile(input.files[0]);
+    }
+  }
+
+  onDragOver(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  onDrop(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    const files = event.dataTransfer?.files;
+    if (files && files.length > 0) {
+      this.processFile(files[0]);
+    }
+  }
+
+  processFile(file: File) {
+    this.imageError = null;
+
+    const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+      this.imageError = 'Please upload a valid image (PNG, JPG, JPEG, or WEBP)';
+      return;
+    }
+
+    const maxSize = 2 * 1024 * 1024;
+    if (file.size > maxSize) {
+      this.imageError = 'Image size must be less than 2MB';
+      return;
+    }
+
+    this.selectedImageFile = file;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      this.selectedImagePreview = e.target?.result as string;
+      this.cdr.detectChanges();
+    };
+    reader.readAsDataURL(file);
+  }
+
+  removeImage() {
+    this.selectedImageFile = null;
+    this.selectedImagePreview = null;
+    this.imageError = null;
   }
 
   onSubmit() {
     if (this.productForm.invalid) return;
 
+    this.submitting = true;
     const productData = this.productForm.value;
-    
-    const request = this.editMode && this.selectedProduct
-      ? this.productService.updateProduct(this.selectedProduct.id, productData)
-      : this.productService.createProduct(productData);
 
-    request.subscribe({
+    if (this.editMode && this.selectedProduct) {
+      this.productService.updateProduct(this.selectedProduct.id, productData).subscribe({
+        next: (response) => {
+          if (this.selectedImageFile) {
+            this.uploadImage(response.id);
+          } else {
+            this.finishSubmit();
+          }
+        },
+        error: (err) => {
+          this.handleError(err, 'update');
+        }
+      });
+    } else {
+      this.productService.createProduct(productData).subscribe({
+        next: (response) => {
+          if (this.selectedImageFile) {
+            this.uploadImage(response.id);
+          } else {
+            this.finishSubmit();
+          }
+        },
+        error: (err) => {
+          this.handleError(err, 'create');
+        }
+      });
+    }
+  }
+
+  uploadImage(productId: string) {
+    if (!this.selectedImageFile) {
+      this.finishSubmit();
+      return;
+    }
+
+    this.uploading = true;
+    this.mediaService.uploadMedia(this.selectedImageFile, productId).subscribe({
       next: () => {
-        this.notificationService.success(
-          this.editMode ? 'Product updated successfully' : 'Product created successfully'
-        );
-        this.closeForm();
-        this.loadProducts();
+        this.finishSubmit();
       },
       error: (err) => {
-        let errorMessage = this.editMode ? 'Failed to update product' : 'Failed to create product';
-        
-        if (err.error?.errors && typeof err.error.errors === 'object') {
-          errorMessage = Object.values(err.error.errors).join(', ');
-        } else if (err.error?.message) {
-          errorMessage = err.error.message;
-        }
-        
-        this.notificationService.error(errorMessage);
+        this.uploading = false;
+        this.submitting = false;
+        this.notificationService.error('Product saved but image upload failed');
+        this.closeForm();
+        this.loadProducts();
+        this.cdr.detectChanges();
       }
     });
+  }
+
+  finishSubmit() {
+    this.uploading = false;
+    this.submitting = false;
+    this.notificationService.success(
+      this.editMode ? 'Product updated successfully' : 'Product created successfully'
+    );
+    this.closeForm();
+    this.loadProducts();
+  }
+
+  handleError(err: any, action: 'create' | 'update') {
+    this.submitting = false;
+    let errorMessage = action === 'update' ? 'Failed to update product' : 'Failed to create product';
+    
+    if (err.error?.errors && typeof err.error.errors === 'object') {
+      errorMessage = Object.values(err.error.errors).join(', ');
+    } else if (err.error?.message) {
+      errorMessage = err.error.message;
+    }
+    
+    this.notificationService.error(errorMessage);
+    this.cdr.detectChanges();
   }
 
   confirmDelete(product: Product) {
