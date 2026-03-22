@@ -1,56 +1,139 @@
-<div class="container mx-auto px-4 md:px-0 py-12">
-    <!-- Header -->
-    <header class="mb-12">
-        <h1 class="text-4xl font-bold text-gray-900 mb-4">Project Overview</h1>
-        <p class="text-xl text-gray-600 leading-relaxed">
-            An end-to-end e-commerce platform using Spring Boot microservices on the backend and
-            Angular on the frontend.
-            Users can register as clients or sellers; sellers manage products and related media (images).
+<div class="min-h-screen">
+  <!-- Hero Section -->
+  <section class="relative bg-gradient-to-r from-blue-600 to-blue-800 text-white">
+    <div class="container mx-auto px-4 py-16 md:py-24">
+      <div class="max-w-2xl">
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+          Discover Amazing Products
+        </h1>
+        <p class="text-lg md:text-xl text-blue-100 mb-8 leading-relaxed">
+          Shop from the best sellers and find quality products at great prices. Your one-stop marketplace for everything you need.
         </p>
-    </header>
-
-    <!-- Role Play Section -->
-    <section class="mb-12 bg-gray-50 p-8 rounded-lg border border-gray-200">
-        <h2 class="text-2xl font-semibold text-gray-800 mb-4">Role Play</h2>
-        <p class="text-gray-700">
-            You are a full-stack engineer designing a small but realistic marketplace composed of independently
-            deployable services.
-            Your mission: deliver a secure, observable, and scalable platform where clients browse products and sellers
-            manage their catalog and media.
-        </p>
-    </section>
-
-    <!-- Learning Objectives -->
-    <section class="mb-12">
-        <h2 class="text-2xl font-semibold text-gray-800 mb-6">Learning Objectives</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="p-6 bg-white rounded-lg border border-gray-100 shadow-sm">
-                <h3 class="font-bold text-blue-600 mb-2">Backend Architecture</h3>
-                <p class="text-sm text-gray-600">Design and implement Spring Boot microservices (User, Product, Media).
-                </p>
-            </div>
-            <div class="p-6 bg-white rounded-lg border border-gray-100 shadow-sm">
-                <h3 class="font-bold text-blue-600 mb-2">Communication</h3>
-                <p class="text-sm text-gray-600">Apply asynchronous communication (e.g., Kafka) where appropriate.</p>
-            </div>
-            <div class="p-6 bg-white rounded-lg border border-gray-100 shadow-sm">
-                <h3 class="font-bold text-blue-600 mb-2">Security</h3>
-                <p class="text-sm text-gray-600">Implement JWT or OAuth2 with Spring Security for role-based access.</p>
-            </div>
-            <div class="p-6 bg-white rounded-lg border border-gray-100 shadow-sm">
-                <h3 class="font-bold text-blue-600 mb-2">Frontend SPA</h3>
-                <p class="text-sm text-gray-600">Build an Angular SPA with routing, guards, interceptors, and forms.</p>
-            </div>
-            <div class="p-6 bg-white rounded-lg border border-gray-100 shadow-sm">
-                <h3 class="font-bold text-blue-600 mb-2">Data Management</h3>
-                <p class="text-sm text-gray-600">Model and persist data in MongoDB (or polyglot where justified).</p>
-            </div>
-            <div class="p-6 bg-white rounded-lg border border-gray-100 shadow-sm">
-                <h3 class="font-bold text-blue-600 mb-2">File Operations</h3>
-                <p class="text-sm text-gray-600">Enforce secure file uploads with validation and size limits.</p>
-            </div>
+        <div class="flex flex-wrap gap-4">
+          <a routerLink="/products" class="px-8 py-3 bg-white text-blue-600 rounded-lg font-semibold hover:bg-blue-50 transition-colors flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            Shop Now
+          </a>
+          <a routerLink="/signup" class="px-8 py-3 bg-transparent border-2 border-white text-white rounded-lg font-semibold hover:bg-white/10 transition-colors flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+            </svg>
+            Become a Seller
+          </a>
         </div>
+      </div>
+    </div>
+    <!-- Decorative Background -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+      <div class="absolute -top-1/2 -right-1/4 w-96 h-96 bg-blue-400/20 rounded-full blur-3xl"></div>
+      <div class="absolute -bottom-1/2 -left-1/4 w-96 h-96 bg-blue-300/10 rounded-full blur-3xl"></div>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <div class="container mx-auto px-4 py-12">
+    <!-- Featured Products -->
+    <app-product-carousel
+      #featuredCarousel
+      [products]="featuredProducts"
+      [loading]="loading"
+      title="Featured Products"
+      subtitle="Handpicked products just for you"
+      viewAllLink="/products"
+      [showAddToCart]="true"
+      [showNavigation]="true"
+      [showDots]="true"
+      [imageHeight]="220"
+      [cardWidth]="280"
+      [visibleCount]="4"
+      [scrollAmount]="300"
+      (productAddToCart)="onAddToCart($event)"
+    ></app-product-carousel>
+
+    <!-- Categories Banner -->
+    <section class="my-16">
+      <div class="bg-gradient-to-r from-gray-50 to-gray-100 rounded-2xl p-8 md:p-12">
+        <div class="flex flex-col md:flex-row items-center gap-8">
+          <div class="flex-1">
+            <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4">Shop by Category</h2>
+            <p class="text-gray-600 mb-6">Browse our wide range of categories and find exactly what you're looking for.</p>
+            <a routerLink="/products" class="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium">
+              Explore All Products
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </a>
+          </div>
+          <div class="flex gap-4 flex-wrap justify-center">
+            <div class="w-28 h-28 bg-white rounded-xl shadow-sm flex items-center justify-center hover:shadow-md transition-shadow cursor-pointer">
+              <div class="text-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mx-auto text-blue-600 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                </svg>
+                <span class="text-xs text-gray-600">Electronics</span>
+              </div>
+            </div>
+            <div class="w-28 h-28 bg-white rounded-xl shadow-sm flex items-center justify-center hover:shadow-md transition-shadow cursor-pointer">
+              <div class="text-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mx-auto text-blue-600 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+                </svg>
+                <span class="text-xs text-gray-600">Fashion</span>
+              </div>
+            </div>
+            <div class="w-28 h-28 bg-white rounded-xl shadow-sm flex items-center justify-center hover:shadow-md transition-shadow cursor-pointer">
+              <div class="text-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mx-auto text-blue-600 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                </svg>
+                <span class="text-xs text-gray-600">Home</span>
+              </div>
+            </div>
+            <div class="w-28 h-28 bg-white rounded-xl shadow-sm flex items-center justify-center hover:shadow-md transition-shadow cursor-pointer">
+              <div class="text-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mx-auto text-blue-600 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                </svg>
+                <span class="text-xs text-gray-600">Beauty</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
+    <!-- Latest Products -->
+    <section class="mb-16">
+      <app-product-carousel
+        #latestCarousel
+        [products]="latestProducts"
+        [loading]="loading"
+        title="Latest Arrivals"
+        subtitle="Fresh products just added"
+        viewAllLink="/products"
+        [showAddToCart]="true"
+        [showNavigation]="true"
+        [showDots]="true"
+        [imageHeight]="220"
+        [cardWidth]="280"
+        [visibleCount]="4"
+        [scrollAmount]="300"
+        (productAddToCart)="onAddToCart($event)"
+      ></app-product-carousel>
+    </section>
 
+    <!-- CTA Section -->
+    <section class="my-16 bg-blue-600 rounded-2xl p-8 md:p-12 text-center text-white">
+      <h2 class="text-2xl md:text-3xl font-bold mb-4">Start Selling Today</h2>
+      <p class="text-blue-100 mb-8 max-w-xl mx-auto">Join our marketplace and reach thousands of customers. Set up your store in minutes.</p>
+      <a routerLink="/signup" class="inline-flex items-center gap-2 px-8 py-3 bg-white text-blue-600 rounded-lg font-semibold hover:bg-blue-50 transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+        </svg>
+        Create Seller Account
+      </a>
+    </section>
+  </div>
 </div>
