@@ -1,31 +1,32 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { Router } from '@angular/router';
 import { ProductService, ProductFilters } from '../../services/product';
 import { MediaService } from '../../services/media';
 import { CartService } from '../../services/cart';
 import { AuthService } from '../../services/auth';
 import { NotificationService } from '../../services/notification';
 import { Product } from '../../models/product';
+import { ProductCardComponent } from '../shared/product-card/product-card';
+import { SkeletonCardComponent } from '../shared/skeleton/skeleton';
 
 @Component({
   selector: 'app-products',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, ProductCardComponent, SkeletonCardComponent],
   templateUrl: './products.html',
   styleUrl: './products.css',
 })
 export class ProductsComponent implements OnInit {
   products: Product[] = [];
   productImages = new Map<string, string>();
-  productQuantities = new Map<string, number>();
   loading = true;
   error: string | null = null;
 
   filters: ProductFilters = {
     page: 0,
-    size: 10,
+    size: 20,
     sortBy: 'name',
     sortDir: 'asc',
   };
@@ -36,7 +37,8 @@ export class ProductsComponent implements OnInit {
   category = '';
   availableOnly = false;
   sellerId = '';
-  addingToCartId: string | null = null;
+
+  skeletonItems = [1, 2, 3, 4, 5, 6, 7, 8];
 
   constructor(
     private productService: ProductService,
@@ -69,8 +71,8 @@ export class ProductsComponent implements OnInit {
     this.productService.getProducts(filters).subscribe({
       next: (data) => {
         this.products = data;
-        this.loading = false;
         this.loadProductImages();
+        this.loading = false;
         this.cdr.detectChanges();
       },
       error: (err) => {
@@ -90,20 +92,11 @@ export class ProductsComponent implements OnInit {
             const imageUrl = this.mediaService.getMediaUrl(media[0].id);
             this.productImages.set(product.id, imageUrl);
             this.cdr.detectChanges();
-          } else {
-            console.log(`No media found for product ${product.id}`);
           }
         },
-        error: (err) => {
-          console.error(`Error fetching media for product ${product.id}:`, err);
-        }
+        error: () => {}
       });
     });
-  }
-
-  onImageError(event: Event, productId: string) {
-    console.error(`Image failed to load for product ${productId}`);
-    this.productImages.delete(productId);
   }
 
   onSearch() {
@@ -150,28 +143,8 @@ export class ProductsComponent implements OnInit {
     this.loadProducts();
   }
 
-  getQuantity(productId: string): number {
-    return this.productQuantities.get(productId) || 1;
-  }
-
-  incrementQuantity(productId: string, maxQuantity: number) {
-    const current = this.getQuantity(productId);
-    if (current < maxQuantity) {
-      this.productQuantities.set(productId, current + 1);
-    }
-  }
-
-  decrementQuantity(productId: string) {
-    const current = this.getQuantity(productId);
-    if (current > 1) {
-      this.productQuantities.set(productId, current - 1);
-    }
-  }
-
-  addToCart(event: Event, product: Product) {
-    event.stopPropagation();
-    this.addingToCartId = product.id;
-    const quantity = this.getQuantity(product.id);
+  onAddToCart(event: { product: Product; quantity: number }) {
+    const { product, quantity } = event;
     this.cartService.addItem({
       productId: product.id,
       productName: product.name,
@@ -181,18 +154,13 @@ export class ProductsComponent implements OnInit {
       imageUrl: this.productImages.get(product.id)
     }).subscribe({
       next: () => {
-        const msg = quantity > 1 
-          ? `${quantity} ${product.name} added to cart`
-          : `${product.name} added to cart`;
+        const msg = quantity > 1 ? `${quantity}x ${product.name} added to cart` : `${product.name} added to cart`;
         this.notificationService.success(msg);
-        this.productQuantities.set(product.id, 1);
-        this.addingToCartId = null;
         this.cdr.detectChanges();
       },
       error: (err) => {
         const msg = err.error?.message || 'Failed to add to cart';
         this.notificationService.error(msg);
-        this.addingToCartId = null;
         this.cdr.detectChanges();
       },
     });
