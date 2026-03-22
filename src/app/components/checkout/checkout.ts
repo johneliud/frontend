@@ -57,7 +57,7 @@ export class CheckoutComponent implements OnInit {
   }
 
   get total(): number {
-    return this.cart?.totalAmount ?? 0;
+    return this.cart?.total ?? 0;
   }
 
   placeOrder() {
