@@ -1,10 +1,11 @@
 import { Component, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { ProductService } from '../../services/product';
 import { MediaService } from '../../services/media';
 import { CartService } from '../../services/cart';
 import { AuthService } from '../../services/auth';
+import { AuthModalService } from '../../services/auth-modal.service';
 import { NotificationService } from '../../services/notification';
 import { Product } from '../../models/product';
 import { ProductCarouselComponent } from '../shared/product-carousel/product-carousel';
@@ -31,7 +32,9 @@ export class HomeComponent implements OnInit {
     private mediaService: MediaService,
     private cartService: CartService,
     private authService: AuthService,
+    private authModalService: AuthModalService,
     private notificationService: NotificationService,
+    private router: Router,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -103,7 +106,15 @@ export class HomeComponent implements OnInit {
     });
   }
 
+  get isSeller(): boolean {
+    return this.authService.userRoleSignal() === 'seller';
+  }
+
   onAddToCart(event: { product: Product; quantity: number }) {
+    if (!this.authService.isAuthenticated()) {
+      this.authModalService.openSignin();
+      return;
+    }
     const { product, quantity } = event;
     this.cartService.addItem({
       productId: product.id,
