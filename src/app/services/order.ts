@@ -33,7 +33,7 @@ export class OrderService {
   }
 
   updateStatus(id: string, status: OrderStatus): Observable<Order> {
-    return this.http.put<any>(`${this.apiUrl}/${id}`, { status }).pipe(map(r => r.data));
+    return this.http.put<any>(`${this.apiUrl}/${id}/status`, { status }).pipe(map(r => r.data));
   }
 
   cancelOrder(id: string): Observable<Order> {
