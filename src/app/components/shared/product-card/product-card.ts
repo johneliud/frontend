@@ -132,14 +132,11 @@ export class ProductCardComponent {
   @Input() product!: Product;
   @Input() imageUrl: string | null = null;
   @Input() showAddToCart = true;
-  @Input() showWishlist = false;
-  @Input() isWishlisted = false;
   @Input() imageHeight = 192;
   @Input() discount?: number;
   @Input() originalPrice?: number;
   
   @Output() addToCart = new EventEmitter<{ product: Product; quantity: number; done: () => void }>();
-  @Output() wishlistToggle = new EventEmitter<Product>();
   
   quantity = 1;
   addingToCart = false;
@@ -188,12 +185,4 @@ export class ProductCardComponent {
     });
   }
 
-  onToggleWishlist(event: Event) {
-    event.stopPropagation();
-    this.wishlistToggle.emit(this.product);
-  }
-
-  resetQuantity() {
-    this.quantity = 1;
-  }
 }
