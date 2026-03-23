@@ -5,15 +5,17 @@
   </div>
 
   <!-- Order Confirmed -->
-  <div *ngIf="!loadingCart && confirmed && placedOrder" class="max-w-lg mx-auto text-center py-12">
+  <div *ngIf="!loadingCart && confirmed && placedOrders.length" class="max-w-lg mx-auto text-center py-12">
     <div class="bg-white rounded-md shadow-lg border border-gray-200 p-8">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-green-500 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
       <h1 class="text-2xl font-bold text-gray-800 mb-2">Order Placed!</h1>
-      <p class="text-gray-600 mb-2">Order ID: <span class="font-mono font-semibold text-gray-800">{{ placedOrder.id }}</span></p>
-      <p class="text-gray-600 mb-2">Total: <span class="font-bold text-blue-600">KES {{ placedOrder.totalAmount | currency: 'KES' : '' : '1.2-2' }}</span></p>
-      <p class="text-gray-600 mb-6">Payment: Pay on Delivery</p>
+      <div *ngFor="let order of placedOrders" class="mb-2">
+        <p class="text-gray-600">Order ID: <span class="font-mono font-semibold text-gray-800">{{ order.id }}</span></p>
+        <p class="text-gray-600">Amount: <span class="font-bold text-blue-600">KES {{ order.totalAmount | currency: 'KES' : '' : '1.2-2' }}</span></p>
+      </div>
+      <p class="text-gray-600 mb-6 mt-2">Payment: Pay on Delivery</p>
       <button
         (click)="goToOrders()"
         class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
