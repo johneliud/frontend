@@ -8,6 +8,6 @@ const content = `export const environment = {
 };\n`;
 
 fs.mkdirSync('src/environments', { recursive: true });
-fs.writeFileSync('src/environments/environment.prod.ts', content);
+fs.writeFileSync('src/environments/environment.ts', content);
 
-console.log(`environment.prod.ts generated with apiUrl: ${apiUrl}`);
+console.log(`environment.ts generated with apiUrl: ${apiUrl}`);
