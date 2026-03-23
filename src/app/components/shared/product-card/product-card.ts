@@ -138,7 +138,7 @@ export class ProductCardComponent {
   @Input() discount?: number;
   @Input() originalPrice?: number;
   
-  @Output() addToCart = new EventEmitter<{ product: Product; quantity: number }>();
+  @Output() addToCart = new EventEmitter<{ product: Product; quantity: number; done: () => void }>();
   @Output() wishlistToggle = new EventEmitter<Product>();
   
   quantity = 1;
@@ -178,17 +178,14 @@ export class ProductCardComponent {
     }
     
     this.addingToCart = true;
-    
-    const item = {
-      productId: this.product.id,
-      productName: this.product.name,
-      price: this.product.price,
+    this.addToCart.emit({
+      product: this.product,
       quantity: this.quantity,
-      sellerId: this.product.userId,
-      imageUrl: this.imageUrl || undefined
-    };
-    
-    this.addToCart.emit({ product: this.product, quantity: this.quantity });
+      done: () => {
+        this.addingToCart = false;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   onToggleWishlist(event: Event) {
