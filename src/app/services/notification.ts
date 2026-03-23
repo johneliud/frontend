@@ -13,7 +13,7 @@ export class NotificationService {
   private notificationSubject = new Subject<NotificationMessage>();
   notification$ = this.notificationSubject.asObservable();
 
-  show(message: string, type: 'success' | 'error') {
+  private show(message: string, type: 'success' | 'error') {
     this.notificationSubject.next({ message, type });
   }
 
