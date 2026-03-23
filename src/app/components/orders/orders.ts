@@ -19,6 +19,7 @@ export class OrdersComponent implements OnInit {
   loading = true;
   error: string | null = null;
   search = '';
+  statusFilter: OrderStatus | '' = '';
   expandedOrderId: string | null = null;
   showCancelConfirm = false;
   orderToCancel: Order | null = null;
@@ -46,9 +47,10 @@ export class OrdersComponent implements OnInit {
     this.loading = true;
     this.error = null;
 
+    const status = this.statusFilter || undefined;
     const request = this.isSeller
-      ? this.orderService.getSellerOrders(this.search || undefined)
-      : this.orderService.getOrders(this.search || undefined);
+      ? this.orderService.getSellerOrders(this.search || undefined, status)
+      : this.orderService.getOrders(this.search || undefined, status);
 
     request.subscribe({
       next: (orders) => {
