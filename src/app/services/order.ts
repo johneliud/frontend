@@ -13,17 +13,19 @@ export class OrderService {
 
   constructor(private http: HttpClient) {}
 
-  getOrders(search?: string): Observable<Order[]> {
+  getOrders(search?: string, status?: OrderStatus): Observable<Order[]> {
     let params = new HttpParams();
     if (search) params = params.set('search', search);
+    if (status) params = params.set('status', status);
     return this.http.get<any>(this.apiUrl, { params }).pipe(
       map(r => r.data?.content || r.data || [])
     );
   }
 
-  getSellerOrders(search?: string): Observable<Order[]> {
+  getSellerOrders(search?: string, status?: OrderStatus): Observable<Order[]> {
     let params = new HttpParams();
     if (search) params = params.set('search', search);
+    if (status) params = params.set('status', status);
     return this.http.get<any>(`${this.apiUrl}/seller`, { params }).pipe(
       map(r => r.data?.content || r.data || [])
     );
