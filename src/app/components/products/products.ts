@@ -147,21 +147,23 @@ export class ProductsComponent implements OnInit {
     this.loadProducts();
   }
 
-  onAddToCart(event: { product: Product; quantity: number }) {
+  onAddToCart(event: { product: Product; quantity: number; done: () => void }) {
     if (!this.authService.isAuthenticatedSignal()) {
       this.router.navigate(['/login']);
       return;
     }
-    const { product, quantity } = event;
+    const { product, quantity, done } = event;
     this.cartService.addItem(product.id, quantity, this.productImages.get(product.id)).subscribe({
       next: () => {
         const msg = quantity > 1 ? `${quantity}x ${product.name} added to cart` : `${product.name} added to cart`;
         this.notificationService.success(msg);
+        done();
         this.cdr.detectChanges();
       },
       error: (err) => {
         const msg = err.error?.message || 'Failed to add to cart';
         this.notificationService.error(msg);
+        done();
         this.cdr.detectChanges();
       },
     });
