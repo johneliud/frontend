@@ -153,14 +153,7 @@ export class ProductsComponent implements OnInit {
       return;
     }
     const { product, quantity } = event;
-    this.cartService.addItem({
-      productId: product.id,
-      productName: product.name,
-      price: product.price,
-      quantity: quantity,
-      sellerId: product.userId,
-      imageUrl: this.productImages.get(product.id)
-    }).subscribe({
+    this.cartService.addItem(product.id, quantity, this.productImages.get(product.id)).subscribe({
       next: () => {
         const msg = quantity > 1 ? `${quantity}x ${product.name} added to cart` : `${product.name} added to cart`;
         this.notificationService.success(msg);
