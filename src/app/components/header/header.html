@@ -4,18 +4,18 @@
     <a routerLink="/" class="text-2xl font-bold">Buy 01</a>
 
     <!-- Desktop Navigation -->
-    <nav class="hidden lg:flex space-x-8 items-center">
-      <a routerLink="/products" class="hover:text-gray-300">Products</a>
+    <nav class="hidden lg:flex space-x-2 items-center">
+      <a routerLink="/products" routerLinkActive="bg-gray-700" class="px-3 py-1 rounded transition-colors hover:text-gray-300">Products</a>
       <!-- Seller links -->
       <ng-container *ngIf="isSeller()">
-        <a routerLink="/seller/dashboard" class="hover:text-gray-300">Dashboard</a>
-        <a routerLink="/seller/media" class="hover:text-gray-300">Media</a>
+        <a routerLink="/seller/dashboard" routerLinkActive="bg-gray-700" class="px-3 py-1 rounded transition-colors hover:text-gray-300">Dashboard</a>
+        <!--<a routerLink="/seller/media" routerLinkActive="bg-gray-700" class="px-3 py-1 rounded transition-colors hover:text-gray-300">Media</a>-->
       </ng-container>
       <!-- Auth links -->
       <ng-container *ngIf="isAuthenticated()">
-        <a routerLink="/orders" class="hover:text-gray-300">Orders</a>
+        <a routerLink="/orders" routerLinkActive="bg-gray-700" class="px-3 py-1 rounded transition-colors hover:text-gray-300">Orders</a>
         <!-- Cart (clients only) -->
-        <a *ngIf="isClient()" routerLink="/cart" class="relative hover:text-gray-300">
+        <a *ngIf="isClient()" routerLink="/cart" routerLinkActive="bg-gray-700" class="relative px-3 py-1 rounded transition-colors hover:text-gray-300">
           Cart
           <span
             *ngIf="cartCount() > 0"
@@ -47,7 +47,8 @@
         <ng-template #authActions>
           <a
             routerLink="/profile"
-            class="hidden lg:block px-2 py-2 rounded-full text-white font-medium hover:text-gray-300 cursor-pointer"
+            routerLinkActive="bg-gray-700"
+            class="hidden lg:block px-2 py-2 rounded-full text-white font-medium hover:text-gray-300 cursor-pointer transition-colors"
           >
             Profile
           </a>
@@ -140,6 +141,7 @@
     <nav class="flex flex-col items-center space-y-4 px-4">
       <a
         routerLink="/products"
+        routerLinkActive="bg-gray-600"
         (click)="toggleMobileMenu()"
         class="block w-full text-center py-3 hover:bg-gray-700 rounded transition-colors"
         >Products</a
@@ -147,12 +149,14 @@
       <ng-container *ngIf="isSeller()">
         <a
           routerLink="/seller/dashboard"
+          routerLinkActive="bg-gray-600"
           (click)="toggleMobileMenu()"
           class="block w-full text-center py-3 hover:bg-gray-700 rounded transition-colors"
           >Dashboard</a
         >
         <a
           routerLink="/seller/media"
+          routerLinkActive="bg-gray-600"
           (click)="toggleMobileMenu()"
           class="block w-full text-center py-3 hover:bg-gray-700 rounded transition-colors"
           >Media</a
@@ -161,6 +165,7 @@
       <ng-container *ngIf="isAuthenticated()">
         <a
           routerLink="/orders"
+          routerLinkActive="bg-gray-600"
           (click)="toggleMobileMenu()"
           class="block w-full text-center py-3 hover:bg-gray-700 rounded transition-colors"
           >Orders</a
@@ -168,6 +173,7 @@
         <a
           *ngIf="isClient()"
           routerLink="/cart"
+          routerLinkActive="bg-gray-600"
           (click)="toggleMobileMenu()"
           class="block w-full text-center py-3 hover:bg-gray-700 rounded transition-colors"
           >Cart<span *ngIf="cartCount() > 0" class="ml-1 text-blue-400">({{ cartCount() }})</span></a
@@ -194,6 +200,7 @@
       <ng-template #mobileAuthActions>
         <a
           routerLink="/profile"
+          routerLinkActive="bg-gray-600"
           (click)="toggleMobileMenu()"
           class="block w-full text-center py-3 hover:bg-gray-700 rounded transition-colors"
           >Profile</a
