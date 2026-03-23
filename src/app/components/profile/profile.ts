@@ -77,7 +77,7 @@ export class ProfileComponent implements OnInit {
       },
       error: (err) => {
         console.error('Failed to load profile:', err);
-        this.notificationService.show('Failed to load profile', 'error');
+        this.notificationService.error('Failed to load profile');
         this.loading = false;
         this.cdr.detectChanges();
       }
@@ -95,13 +95,13 @@ export class ProfileComponent implements OnInit {
       const file = input.files[0];
 
       if (file.size > 2 * 1024 * 1024) {
-        this.notificationService.show('File size must be less than 2MB', 'error');
+        this.notificationService.error('File size must be less than 2MB');
         return;
       }
 
       const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
       if (!allowedTypes.includes(file.type)) {
-        this.notificationService.show('Only PNG, JPG, JPEG, WEBP allowed', 'error');
+        this.notificationService.error('Only PNG, JPG, JPEG, WEBP allowed');
         return;
       }
 
@@ -117,7 +117,7 @@ export class ProfileComponent implements OnInit {
 
   updateProfile() {
     if (!this.name || !this.email) {
-      this.notificationService.show('Name and email are required', 'error');
+      this.notificationService.error('Name and email are required');
       return;
     }
 
@@ -128,13 +128,13 @@ export class ProfileComponent implements OnInit {
     }).subscribe({
       next: (response) => {
         this.user = response.data;
-        this.notificationService.show('Profile updated successfully', 'success');
+        this.notificationService.success('Profile updated successfully');
         this.updating = false;
         this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Failed to update profile:', err);
-        this.notificationService.show('Failed to update profile', 'error');
+        this.notificationService.error('Failed to update profile');
         this.updating = false;
         this.cdr.detectChanges();
       }
@@ -143,7 +143,7 @@ export class ProfileComponent implements OnInit {
 
   uploadAvatar() {
     if (!this.selectedAvatar) {
-      this.notificationService.show('Please select an image', 'error');
+      this.notificationService.error('Please select an image');
       return;
     }
 
@@ -156,13 +156,13 @@ export class ProfileComponent implements OnInit {
         this.user = response.data;
         this.selectedAvatar = null;
         this.avatarPreview = null;
-        this.notificationService.show('Avatar updated successfully', 'success');
+        this.notificationService.success('Avatar updated successfully');
         this.uploadingAvatar = false;
         this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Failed to upload avatar:', err);
-        this.notificationService.show('Failed to upload avatar', 'error');
+        this.notificationService.error('Failed to upload avatar');
         this.uploadingAvatar = false;
         this.cdr.detectChanges();
       }
