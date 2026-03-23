@@ -37,11 +37,8 @@ import { SkeletonCardComponent } from '../skeleton/skeleton';
               [product]="product"
               [imageUrl]="getProductImage(product.id)"
               [showAddToCart]="showAddToCart"
-              [showWishlist]="showWishlist"
-              [isWishlisted]="isWishlisted(product)"
               [imageHeight]="imageHeight"
               (addToCart)="onAddToCart($event)"
-              (wishlistToggle)="onWishlistToggle($event)"
             ></app-product-card>
           </div>
         </div>
@@ -95,7 +92,6 @@ export class ProductCarouselComponent {
   @Input() subtitle = '';
   @Input() viewAllLink: string | null = null;
   @Input() showAddToCart = true;
-  @Input() showWishlist = false;
   @Input() showNavigation = true;
   @Input() showDots = true;
   @Input() imageHeight = 192;
@@ -105,10 +101,8 @@ export class ProductCarouselComponent {
   @Input() emptyMessage = 'No products available';
   
   @Output() productAddToCart = new EventEmitter<{ product: Product; quantity: number; done: () => void }>();
-  @Output() productWishlistToggle = new EventEmitter<Product>();
-  
+
   productImages = new Map<string, string>();
-  wishlistIds = new Set<string>();
   
   scrollPosition = 0;
   currentIndex = 0;
@@ -131,19 +125,6 @@ export class ProductCarouselComponent {
 
   setProductImages(images: Map<string, string>) {
     this.productImages = images;
-    this.cdr.detectChanges();
-  }
-
-  isWishlisted(product: Product): boolean {
-    return this.wishlistIds.has(product.id);
-  }
-
-  toggleWishlist(productId: string) {
-    if (this.wishlistIds.has(productId)) {
-      this.wishlistIds.delete(productId);
-    } else {
-      this.wishlistIds.add(productId);
-    }
     this.cdr.detectChanges();
   }
 
@@ -178,8 +159,4 @@ export class ProductCarouselComponent {
     this.productAddToCart.emit(event);
   }
 
-  onWishlistToggle(product: Product) {
-    this.toggleWishlist(product.id);
-    this.productWishlistToggle.emit(product);
-  }
 }
