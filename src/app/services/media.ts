@@ -46,7 +46,4 @@ export class MediaService {
     return `${this.apiUrl}/${id}`;
   }
 
-  getImage(id: string): Observable<Blob> {
-    return this.http.get(`${this.apiUrl}/${id}`, { responseType: 'blob' });
-  }
 }
