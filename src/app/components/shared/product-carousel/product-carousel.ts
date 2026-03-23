@@ -104,7 +104,7 @@ export class ProductCarouselComponent {
   @Input() scrollAmount = 300;
   @Input() emptyMessage = 'No products available';
   
-  @Output() productAddToCart = new EventEmitter<{ product: Product; quantity: number }>();
+  @Output() productAddToCart = new EventEmitter<{ product: Product; quantity: number; done: () => void }>();
   @Output() productWishlistToggle = new EventEmitter<Product>();
   
   productImages = new Map<string, string>();
@@ -174,7 +174,7 @@ export class ProductCarouselComponent {
     this.cdr.detectChanges();
   }
 
-  onAddToCart(event: { product: Product; quantity: number }) {
+  onAddToCart(event: { product: Product; quantity: number; done: () => void }) {
     this.productAddToCart.emit(event);
   }
 
