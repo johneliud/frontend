@@ -44,17 +44,3 @@ export class SkeletonComponent {
   `,
 })
 export class SkeletonCardComponent {}
-
-@Component({
-  selector: 'app-skeleton-text',
-  standalone: true,
-  imports: [CommonModule],
-  template: `
-    <div class="animate-pulse space-y-2">
-      <div class="h-4 bg-gray-200 rounded" [class]="widthClass"></div>
-    </div>
-  `,
-})
-export class SkeletonTextComponent {
-  @Input() widthClass = 'w-full';
-}
