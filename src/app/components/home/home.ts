@@ -116,14 +116,11 @@ export class HomeComponent implements OnInit {
       return;
     }
     const { product, quantity } = event;
-    this.cartService.addItem({
-      productId: product.id,
-      productName: product.name,
-      price: product.price,
-      quantity: quantity,
-      sellerId: product.userId,
-      imageUrl: this.featuredImages.get(product.id) || this.latestImages.get(product.id) || undefined
-    }).subscribe({
+    this.cartService.addItem(
+      product.id,
+      quantity,
+      this.featuredImages.get(product.id) || this.latestImages.get(product.id) || undefined
+    ).subscribe({
       next: () => {
         const msg = quantity > 1 ? `${quantity}x ${product.name} added to cart` : `${product.name} added to cart`;
         this.notificationService.success(msg);
