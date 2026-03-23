@@ -8,9 +8,9 @@ const mockCart: Cart = {
   id: 'cart1',
   userId: 'user1',
   items: [
-    { id: 'item1', productId: 'prod1', productName: 'Product One', price: 100, quantity: 2 },
+    { productId: 'prod1', productName: 'Product One', price: 100, quantity: 2 },
   ],
-  totalAmount: 200,
+  total: 200,
 };
 
 describe('CartService', () => {
@@ -61,7 +61,7 @@ describe('CartService', () => {
   });
 
   it('removeItem should delete item and update count', () => {
-    const emptyCart: Cart = { ...mockCart, items: [], totalAmount: 0 };
+    const emptyCart: Cart = { ...mockCart, items: [], total: 0 };
     service.removeItem('item1').subscribe(cart => {
       expect(cart.items.length).toBe(0);
       expect(service.cartCount()).toBe(0);
@@ -79,16 +79,16 @@ describe('CartService', () => {
   });
 
   it('checkout should post and reset cart count', () => {
-    const order = { id: 'order1', totalAmount: 200 };
+    const orders = [{ id: 'order1', userId: 'user1', sellerId: 'seller1', items: [], totalAmount: 200, status: 'PENDING' as const, createdAt: '' }];
     service.checkout({
       deliveryAddress: { fullName: 'Test', address: 'Addr', city: 'City', phone: '123' },
       paymentMethod: 'PAY_ON_DELIVERY'
     }).subscribe(o => {
-      expect(o.id).toBe('order1');
+      expect(o[0].id).toBe('order1');
       expect(service.cartCount()).toBe(0);
     });
     const req = httpMock.expectOne('http://localhost:8083/api/cart/checkout');
     expect(req.request.method).toBe('POST');
-    req.flush({ data: order });
+    req.flush({ data: orders });
   });
 });
