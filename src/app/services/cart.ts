@@ -24,8 +24,8 @@ export class CartService {
     );
   }
 
-  addItem(item: { productId: string; productName: string; price: number; quantity: number; sellerId: string; imageUrl?: string }): Observable<Cart> {
-    return this.http.post<any>(`${this.apiUrl}/items`, item).pipe(
+  addItem(productId: string, quantity: number, imageUrl?: string): Observable<Cart> {
+    return this.http.post<any>(`${this.apiUrl}/items`, { productId, quantity, imageUrl }).pipe(
       map(r => r.data || r),
       tap(cart => this.cartItemCount.set(cart?.items?.length ?? 0))
     );
