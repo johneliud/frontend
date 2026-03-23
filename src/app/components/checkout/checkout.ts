@@ -19,7 +19,7 @@ export class CheckoutComponent implements OnInit {
   loadingCart = true;
   placing = false;
   confirmed = false;
-  placedOrder: Order | null = null;
+  placedOrders: Order[] = [];
 
   addressForm: FormGroup;
   selectedPaymentMethod = 'PAY_ON_DELIVERY';
@@ -77,8 +77,8 @@ export class CheckoutComponent implements OnInit {
       paymentMethod: this.selectedPaymentMethod
     };
     this.cartService.checkout(checkoutData).subscribe({
-      next: (order) => {
-        this.placedOrder = order;
+      next: (orders) => {
+        this.placedOrders = orders;
         this.confirmed = true;
         this.placing = false;
         this.cdr.detectChanges();
