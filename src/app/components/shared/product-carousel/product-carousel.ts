@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectorRef, ViewChild, ElementRef, AfterViewInit, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Product } from '../../../models/product';
@@ -28,11 +28,12 @@ import { SkeletonCardComponent } from '../skeleton/skeleton';
         <app-skeleton-card *ngFor="let item of skeletonItems"></app-skeleton-card>
       </div>
 
-      <div *ngIf="!loading && products.length > 0" class="relative overflow-hidden">
-        <div class="flex gap-6 transition-transform duration-300 ease-out" 
-             [style.transform]="'translateX(-' + scrollPosition + 'px)'">
-          
-          <div *ngFor="let product of products" class="flex-shrink-0 w-full sm:w-1/2 lg:w-1/3 xl:w-1/4" [style.width.px]="cardWidth">
+      <div *ngIf="!loading && products.length > 0" class="relative">
+        <div #scrollContainer
+             (scroll)="onScroll()"
+             class="flex gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-2 no-scrollbar">
+
+          <div *ngFor="let product of products" class="flex-shrink-0 snap-start" [style.width.px]="cardWidth">
             <app-product-card
               [product]="product"
               [imageUrl]="getProductImage(product.id)"
@@ -46,17 +47,19 @@ import { SkeletonCardComponent } from '../skeleton/skeleton';
         <button
           *ngIf="showNavigation && canScrollLeft"
           (click)="scrollLeft()"
-          class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 w-10 h-10 bg-white hover:bg-gray-50 rounded-full shadow-lg flex items-center justify-center opacity-0 group-hover/carousel:opacity-100 transition-opacity z-10"
+          aria-label="Scroll left"
+          class="hidden sm:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 w-10 h-10 bg-white hover:bg-gray-50 rounded-full shadow-lg items-center justify-center opacity-0 group-hover/carousel:opacity-100 transition-opacity z-10"
         >
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
           </svg>
         </button>
-        
+
         <button
           *ngIf="showNavigation && canScrollRight"
           (click)="scrollRight()"
-          class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 w-10 h-10 bg-white hover:bg-gray-50 rounded-full shadow-lg flex items-center justify-center opacity-0 group-hover/carousel:opacity-100 transition-opacity z-10"
+          aria-label="Scroll right"
+          class="hidden sm:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 w-10 h-10 bg-white hover:bg-gray-50 rounded-full shadow-lg items-center justify-center opacity-0 group-hover/carousel:opacity-100 transition-opacity z-10"
         >
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -83,9 +86,13 @@ import { SkeletonCardComponent } from '../skeleton/skeleton';
       </div>
     </div>
   `,
-  styles: [`:host { display: block; }`]
+  styles: [`
+    :host { display: block; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+  `]
 })
-export class ProductCarouselComponent {
+export class ProductCarouselComponent implements AfterViewInit, OnChanges {
   @Input() products: Product[] = [];
   @Input() loading = false;
   @Input() title = '';
@@ -99,12 +106,13 @@ export class ProductCarouselComponent {
   @Input() visibleCount = 4;
   @Input() scrollAmount = 300;
   @Input() emptyMessage = 'No products available';
-  
+
   @Output() productAddToCart = new EventEmitter<{ product: Product; quantity: number; done: () => void }>();
 
+  @ViewChild('scrollContainer') scrollContainerRef!: ElementRef<HTMLElement>;
+
   productImages = new Map<string, string>();
-  
-  scrollPosition = 0;
+
   currentIndex = 0;
   canScrollLeft = false;
   canScrollRight = true;
@@ -119,6 +127,22 @@ export class ProductCarouselComponent {
 
   constructor(private cdr: ChangeDetectorRef) {}
 
+  ngAfterViewInit() {
+    this.updateScrollState();
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['products']) {
+      // Reset scroll position when products change
+      if (this.scrollContainerRef) {
+        this.scrollContainerRef.nativeElement.scrollLeft = 0;
+      }
+      this.currentIndex = 0;
+      // Defer state update to allow DOM to render new products
+      setTimeout(() => this.updateScrollState());
+    }
+  }
+
   getProductImage(productId: string): string | null {
     return this.productImages.get(productId) || null;
   }
@@ -129,29 +153,31 @@ export class ProductCarouselComponent {
   }
 
   scrollLeft() {
-    const maxScroll = (this.products.length - this.visibleCount) * (this.cardWidth + 24);
-    this.scrollPosition = Math.max(0, this.scrollPosition - this.scrollAmount);
-    this.updateScrollState();
+    this.scrollContainerRef.nativeElement.scrollBy({ left: -this.scrollAmount, behavior: 'smooth' });
   }
 
   scrollRight() {
-    const maxScroll = (this.products.length - this.visibleCount) * (this.cardWidth + 24);
-    this.scrollPosition = Math.min(maxScroll, this.scrollPosition + this.scrollAmount);
-    this.updateScrollState();
+    this.scrollContainerRef.nativeElement.scrollBy({ left: this.scrollAmount, behavior: 'smooth' });
   }
 
   scrollToIndex(index: number) {
-    const maxScroll = (this.products.length - this.visibleCount) * (this.cardWidth + 24);
-    this.scrollPosition = Math.min(maxScroll, index * this.scrollAmount);
+    const el = this.scrollContainerRef.nativeElement;
+    el.scrollTo({ left: index * (this.cardWidth + 24), behavior: 'smooth' });
     this.currentIndex = index;
+    this.cdr.detectChanges();
+  }
+
+  onScroll() {
     this.updateScrollState();
   }
 
   updateScrollState() {
-    const maxScroll = (this.products.length - this.visibleCount) * (this.cardWidth + 24);
-    this.canScrollLeft = this.scrollPosition > 0;
-    this.canScrollRight = this.scrollPosition < maxScroll && maxScroll > 0;
-    this.currentIndex = Math.floor(this.scrollPosition / (this.cardWidth + 24));
+    if (!this.scrollContainerRef) return;
+    const el = this.scrollContainerRef.nativeElement;
+    const maxScroll = el.scrollWidth - el.clientWidth;
+    this.canScrollLeft = el.scrollLeft > 0;
+    this.canScrollRight = maxScroll > 0 && el.scrollLeft < maxScroll - 1;
+    this.currentIndex = Math.round(el.scrollLeft / (this.cardWidth + 24));
     this.cdr.detectChanges();
   }
 
