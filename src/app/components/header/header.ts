@@ -1,4 +1,4 @@
-import { Component, OnInit, computed } from '@angular/core';
+import { Component, computed, HostListener, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { AuthService } from '../../services/auth';
@@ -25,7 +25,15 @@ export class HeaderComponent {
     private router: Router,
     private modalService: AuthModalService,
     public cartService: CartService,
+    private el: ElementRef,
   ) {}
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    if (this.isMobileMenuOpen && !this.el.nativeElement.contains(event.target as Node)) {
+      this.isMobileMenuOpen = false;
+    }
+  }
 
   isAuthenticated(): boolean {
     return this.authService.isAuthenticatedSignal();
